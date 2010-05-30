@@ -1,0 +1,2023 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE model SYSTEM "StanfordRelations.dtd">
+<model>
+  <relation id="gov">
+    <name>GOVERNOR</name>
+    <shortname>gov</shortname>
+    <longname>governor</longname>
+    <description>The "governor" grammatical relation, which is the inverse of "dependent"</description>
+    <example>
+      <text>the red car</text>
+      <coding>gov(red, car)</coding>
+    </example>
+  </relation>
+  <relation id="dep" root="true">
+    <name>DEPENDENT</name>
+    <shortname>dep</shortname>
+    <longname>dependent</longname>
+    <description>The "dependent" grammatical relation, which is the inverse of "governor"</description>
+    <example>
+      <text>the red car</text>
+      <coding>dep(car, red)</coding>
+    </example>
+  </relation>
+  <relation id="pred">
+    <name>PREDICATE</name>
+    <shortname>pred</shortname>
+    <longname>predicate</longname>
+    <parent>dep</parent>
+    <description>The "predicate" grammatical relation. The predicate of a clause is the main VP of that clause; the predicate of a subject is the predicate of the clause to which the subject belongs.</description>
+    <sourcepattern><![CDATA[S|SINV]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[S < VP=target]]></compile>
+      <pretty><![CDATA[Root S
+   < VP=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Reagan died</text>
+      <coding>pred(Reagan, died)</coding>
+    </example>
+  </relation>
+  <relation id="aux">
+    <name>AUX_MODIFIER</name>
+    <shortname>aux</shortname>
+    <longname>auxiliary</longname>
+    <parent>dep</parent>
+    <description>The "auxiliary" grammatical relation. An auxiliary of a clause is a non-main verb of the clause.</description>
+    <sourcepattern><![CDATA[VP|SQ|SINV]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP < VP < /^(?:TO|MD|VB.*)$/=target]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      < VP
+      < /^(?:TO|MD|VB.*)$/=target]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SQ|SINV < (/^VB|MD/=target $++ /^(?:VP|ADJP)/)]]></compile>
+      <pretty><![CDATA[Root SQ|SINV
+   < /^VB|MD/=target
+      $++ /^(?:VP|ADJP)/]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Reagan has died</text>
+      <coding>aux(died, has)</coding>
+    </example>
+  </relation>
+  <relation id="auxpass">
+    <name>AUX_PASSIVE_MODIFIER</name>
+    <shortname>auxpass</shortname>
+    <longname>passive auxiliary</longname>
+    <parent>aux</parent>
+    <description>The "passive auxiliary" grammatical relation. A passive auxiliary of a clause is a non-main verb of the clause which contains the passive information.</description>
+    <sourcepattern><![CDATA[VP|SQ]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (/^(?:VB|AUXG?)/=target < /be|was|'s|is|are|were|been|being|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/) < (VP|ADJP < VBN|VBD)]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      < /^(?:VB|AUXG?)/=target
+         < /be|was|'s|is|are|were|been|being|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/
+      < VP|ADJP
+         < VBN|VBD]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (/^(?:VB|AUXG?)/=target < /be|was|'s|is|are|were|been|being|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/) < (VP|ADJP < (VP|ADJP < VBN|VBD) < CC)]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      < /^(?:VB|AUXG?)/=target
+         < /be|was|'s|is|are|were|been|being|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/
+      < VP|ADJP
+         and
+            < VP|ADJP
+               < VBN|VBD
+            < CC]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SQ < (/^(?:VB|AUX)/=target < /^(?:was|is|are|were|am|Was|Is|Are|Were|Am|WAS|IS|ARE|WERE|AM)$/ $++ (VP < /^VB[DN]$/))]]></compile>
+      <pretty><![CDATA[Root SQ
+   < /^(?:VB|AUX)/=target
+      and
+         < /^(?:was|is|are|were|am|Was|Is|Are|Were|Am|WAS|IS|ARE|WERE|AM)$/
+         $++ VP
+            < /^VB[DN]$/]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Kennedy has been killed</text>
+      <coding>auxpass(killed, been)</coding>
+    </example>
+  </relation>
+  <relation id="cop">
+    <name>COPULA</name>
+    <shortname>cop</shortname>
+    <longname>copula</longname>
+    <parent>aux</parent>
+    <description>The "copula" grammatical relation. A copula is the relation between the complement of a copular verb and the copular verb.</description>
+    <sourcepattern><![CDATA[VP|SQ]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (/^VB/=target < /(?i)^(?:am|'m|are|'re|is|'s|be|being|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/ [ $++ (ADJP|NP !< VBN) | $++ (S <: (ADJP < JJ)) ] )]]></compile>
+      <pretty><![CDATA[Root VP
+   < /^VB/=target
+      and
+         < /(?i)^(?:am|'m|are|'re|is|'s|be|being|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/
+         or
+            $++ ADJP|NP
+               !< VBN
+            $++ S
+               <: ADJP
+                  < JJ]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SQ <, (/^VB/=target < /(?i)^(am|are|is|was|were)$/) !$ /^WH*/]]></compile>
+      <pretty><![CDATA[Root SQ
+   and
+      <1 /^VB/=target
+         < /(?i)^(am|are|is|was|were)$/
+      !$ /^WH*/]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Bill is big</text>
+      <coding>cop(big, is)</coding>
+    </example>
+    <example>
+      <text>Bill is an honest man</text>
+      <coding>cop(man, is)</coding>
+    </example>
+  </relation>
+  <relation id="conj">
+    <name>CONJUNCT</name>
+    <shortname>conj</shortname>
+    <longname>conjunct</longname>
+    <parent>dep</parent>
+    <description>The "conjunct" grammatical relation. A conjunct is the relation between two elements connected by a conjunction word. We treat conjunctions asymmetrically: The head of the relation is the first conjunct and other conjunctions depend on it via the conj relation.</description>
+    <sourcepattern><![CDATA[VP|NP|ADJP|PP|QP|ADVP|UCP|S|NX|SBAR]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP|ADJP|PP|QP|NP|ADVP|UCP|S|NX|SBAR < (CC|CONJP $+ !PRN=target) !<, CC]]></compile>
+      <pretty><![CDATA[Root VP|ADJP|PP|QP|NP|ADVP|UCP|S|NX|SBAR
+   and
+      < CC|CONJP
+         $+ !PRN=target
+      !<1 CC]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP|ADJP|PP|NP|ADVP|UCP|S|NX|SBAR < (CC|CONJP $+ (ADVP $+ !PRN=target))]]></compile>
+      <pretty><![CDATA[Root VP|ADJP|PP|NP|ADVP|UCP|S|NX|SBAR
+   < CC|CONJP
+      $+ ADVP
+         $+ !PRN=target]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP|ADJP|PP|NP|ADVP|UCP|S|NX|SBAR < CC|CONJP < (/^,$/ $+ /^S$|^(A|N|V|PP|PRP|J|W|R)/=target)]]></compile>
+      <pretty><![CDATA[Root VP|ADJP|PP|NP|ADVP|UCP|S|NX|SBAR
+   and
+      < CC|CONJP
+      < /^,$/
+         $+ /^S$|^(A|N|V|PP|PRP|J|W|R)/=target]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP|ADJP|PP|NP|ADVP|UCP|S|NX|SBAR < CC|CONJP < (PRN $+ /^(A|N|V|PP|PRP|J|W|R|S)/=target)]]></compile>
+      <pretty><![CDATA[Root VP|ADJP|PP|NP|ADVP|UCP|S|NX|SBAR
+   and
+      < CC|CONJP
+      < PRN
+         $+ /^(A|N|V|PP|PRP|J|W|R|S)/=target]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[NX < CC|CONJP < (/^,$/ $- /^(A|N|V|PP|PRP|J|W|R|S)/=target)]]></compile>
+      <pretty><![CDATA[Root NX
+   and
+      < CC|CONJP
+      < /^,$/
+         $- /^(A|N|V|PP|PRP|J|W|R|S)/=target]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP|ADJP|PP|QP|NP|ADVP|UCP|S|NX|SBAR < (CC $++ (CC $+ !PRN=target))]]></compile>
+      <pretty><![CDATA[Root VP|ADJP|PP|QP|NP|ADVP|UCP|S|NX|SBAR
+   < CC
+      $++ CC
+         $+ !PRN=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Bill is big and honest</text>
+      <coding>conj(big, honest)</coding>
+    </example>
+  </relation>
+  <relation id="cc">
+    <name>COORDINATION</name>
+    <shortname>cc</shortname>
+    <longname>coordination</longname>
+    <parent>dep</parent>
+    <description>The "coordination" grammatical relation. A coordination is the relation between an element and a conjunction.</description>
+    <sourcepattern><![CDATA[S|VP|NP|ADJP|PP|QP|ADVP|UCP|NX|SBAR]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[S|VP|NP|QP|ADJP|PP|ADVP|UCP|NX|SBAR < (CC|CONJP=target !< /either|neither|both|Either|Neither|Both/)]]></compile>
+      <pretty><![CDATA[Root S|VP|NP|QP|ADJP|PP|ADVP|UCP|NX|SBAR
+   < CC|CONJP=target
+      !< /either|neither|both|Either|Neither|Both/]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Bill is big and honest.</text>
+      <coding>cc(big, and)</coding>
+    </example>
+  </relation>
+  <relation id="punct">
+    <name>PUNCTUATION</name>
+    <shortname>punct</shortname>
+    <longname>punctuation</longname>
+    <parent>dep</parent>
+    <description>The "punctuation" grammatical relation. This is used for any piece of punctuation in a clause, if punctuation is being retained in the typed dependencies.</description>
+    <sourcepattern><![CDATA[S|NP|VP|SQ|PRN|SINV|SBAR|UCP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[__ < /^(?:\.|:|,|''|``|-LRB-|-RRB-)$/=target]]></compile>
+      <pretty><![CDATA[Root __
+   < /^(?:\.|:|,|''|``|-LRB-|-RRB-)$/=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Go home!</text>
+      <coding>punct(Go, !)</coding>
+    </example>
+  </relation>
+  <relation id="arg">
+    <name>ARGUMENT</name>
+    <shortname>arg</shortname>
+    <longname>argument</longname>
+    <parent>dep</parent>
+    <description>The "argument" grammatical relation. An argument of a VP is a subject or complement of that VP; an argument of a clause is an argument of the VP which is the predicate of that clause.</description>
+    <example>
+      <text>Clinton defeated Dole</text>
+      <coding>arg(defeated, Clinton), arg(defeated, Dole)</coding>
+    </example>
+  </relation>
+  <relation id="subj">
+    <name>SUBJECT</name>
+    <shortname>subj</shortname>
+    <longname>subject</longname>
+    <parent>arg</parent>
+    <description>The "subject" grammatical relation. The subject of a VP is the noun or clause that performs or experiences the VP; the subject of a clause is the subject of the VP which is the predicate of that clause.</description>
+    <example>
+      <text>Clinton defeated Dole</text>
+      <coding>subj(defeated, Clinton)</coding>
+    </example>
+    <example>
+      <text>What she said is untrue</text>
+      <coding>subj(is, What she said)</coding>
+    </example>
+  </relation>
+  <relation id="nsubj">
+    <name>NOMINAL_SUBJECT</name>
+    <shortname>nsubj</shortname>
+    <longname>nominal subject</longname>
+    <parent>subj</parent>
+    <description>The "nominal subject" grammatical relation. A nominal subject is a subject which is an noun phrase.</description>
+    <sourcepattern><![CDATA[S|SQ|SBARQ|SINV|SBAR]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[S < ((NP|WHNP=target !< EX !< (/^NN/ < (/^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/))) $++ VP)]]></compile>
+      <pretty><![CDATA[Root S
+   < NP|WHNP=target
+      and
+         and
+            !< EX
+            !< /^NN/
+               < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/
+         $++ VP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S < ( NP=target < (/^NN/ < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/) !$++ NP $++VP)]]></compile>
+      <pretty><![CDATA[Root S
+   < NP=target
+      and
+         < /^NN/
+            < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/
+         !$++ NP
+         $++ VP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SQ < ((NP=target !< EX) $++ VP)]]></compile>
+      <pretty><![CDATA[Root SQ
+   < NP=target
+      and
+         !< EX
+         $++ VP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SQ < ((NP=target !< EX) $- /^VB/ !$++ VP)]]></compile>
+      <pretty><![CDATA[Root SQ
+   < NP=target
+      and
+         !< EX
+         and
+            $- /^VB/
+            !$++ VP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SQ < ((NP=target !< EX) $- (RB $- /^VB/) ![$++ VP])]]></compile>
+      <pretty><![CDATA[Root SQ
+   < NP=target
+      and
+         !< EX
+         and
+            $- RB
+               $- /^VB/
+            !$++ VP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SBARQ < WHNP=target < (SQ < (VP ![$-- NP]))]]></compile>
+      <pretty><![CDATA[Root SBARQ
+   and
+      < WHNP=target
+      < SQ
+         < VP
+            !$-- NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SBARQ < (SQ=target < /^VB/ !< VP)]]></compile>
+      <pretty><![CDATA[Root SBARQ
+   < SQ=target
+      and
+         < /^VB/
+         !< VP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SINV < (VP|VBZ|VBD $+ /^NP|WHNP$/=target)]]></compile>
+      <pretty><![CDATA[Root SINV
+   < VP|VBZ|VBD
+      $+ /^NP|WHNP$/=target]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S < (NP=target $+ NP|ADJP) > VP]]></compile>
+      <pretty><![CDATA[Root S
+   and
+      < NP=target
+         $+ NP|ADJP
+      > VP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SBAR <, WHNP=target < (S < (VP !$-- NP) !< SBAR)]]></compile>
+      <pretty><![CDATA[Root SBAR
+   and
+      <1 WHNP=target
+      < S
+         and
+            < VP
+               !$-- NP
+            !< SBAR]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SBAR !< WHNP < (S !< (NP $++ VP)) > (VP > (S $- WHNP=target))]]></compile>
+      <pretty><![CDATA[Root SBAR
+   and
+      !< WHNP
+      < S
+         !< NP
+            $++ VP
+      > VP
+         > S
+            $- WHNP=target]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SQ < ((NP < EX) $++ NP=target)]]></compile>
+      <pretty><![CDATA[Root SQ
+   < NP
+      and
+         < EX
+         $++ NP=target]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S < (NP < EX) < (VP < NP=target)]]></compile>
+      <pretty><![CDATA[Root S
+   and
+      < NP
+         < EX
+      < VP
+         < NP=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Clinton defeated Dole</text>
+      <coding>nsubj(defeated, Clinton)</coding>
+    </example>
+  </relation>
+  <relation id="nsubjpass">
+    <name>NOMINAL_PASSIVE_SUBJECT</name>
+    <shortname>nsubjpass</shortname>
+    <longname>nominal passive subject</longname>
+    <parent>nsubj</parent>
+    <description>The "nominal passive subject" grammatical relation. A nominal passive subject is a subject of a passive which is an noun phrase.</description>
+    <sourcepattern><![CDATA[S|VP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[S < /^NP|WHNP$/=target < (VP|SQ < (VP < VBN|VBD) < (/^(VB|AUX)/ < /be|was|is|are|were|been|being|'s|'re|'m|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/))]]></compile>
+      <pretty><![CDATA[Root S
+   and
+      < /^NP|WHNP$/=target
+      < VP|SQ
+         and
+            < VP
+               < VBN|VBD
+            < /^(VB|AUX)/
+               < /be|was|is|are|were|been|being|'s|'re|'m|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S < /^(NP|WHNP)$/=target < (VP|SQ <+(VP) (VP < VBN|VBD > (VP < (/^(VB|AUX)/ < /be|was|is|are|were|been|being|'s|'re|'m|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/))))]]></compile>
+      <pretty><![CDATA[Root S
+   and
+      < /^(NP|WHNP)$/=target
+      < VP|SQ
+         <+(VP) VP
+            and
+               < VBN|VBD
+               > VP
+                  < /^(VB|AUX)/
+                     < /be|was|is|are|were|been|being|'s|'re|'m|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Dole was defeated by Clinton</text>
+      <coding>nsubjpass(defeated, Dole)</coding>
+    </example>
+  </relation>
+  <relation id="csubj">
+    <name>CLAUSAL_SUBJECT</name>
+    <shortname>csubj</shortname>
+    <longname>clausal subject</longname>
+    <parent>subj</parent>
+    <description>The "clausal subject" grammatical relation. A clausal subject is a subject which is a clause.</description>
+    <sourcepattern><![CDATA[S]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[S < (SBAR|S=target !$+ /^,$/ $++ (VP !$-- NP))]]></compile>
+      <pretty><![CDATA[Root S
+   < SBAR|S=target
+      and
+         !$+ /^,$/
+         $++ VP
+            !$-- NP]]></pretty>
+    </targetpattern>
+    <example>
+      <text>What she said makes sense</text>
+      <coding>csubj(makes, said)</coding>
+    </example>
+    <example>
+      <text>What she said is untrue</text>
+      <coding>csubj(untrue, said)</coding>
+    </example>
+  </relation>
+  <relation id="csubjpass">
+    <name>CLAUSAL_PASSIVE_SUBJECT</name>
+    <shortname>csubjpass</shortname>
+    <longname>clausal subject</longname>
+    <parent>csubj</parent>
+    <description>The "clausal passive subject" grammatical relation. A clausal passive subject is a subject of a passive verb which is a clause.</description>
+    <sourcepattern><![CDATA[S]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[S < (SBAR|S=target !$+ /^,$/ $++ (VP < (VP < VBN|VBD) < (/^(VB|AUX)/ < /be|was|is|are|were|been|being|'s|'re|'m|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/) !$-- NP))]]></compile>
+      <pretty><![CDATA[Root S
+   < SBAR|S=target
+      and
+         !$+ /^,$/
+         $++ VP
+            and
+               < VP
+                  < VBN|VBD
+               < /^(VB|AUX)/
+                  < /be|was|is|are|were|been|being|'s|'re|'m|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/
+               !$-- NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S < (SBAR|S=target !$+ /^,$/ $++ (VP <+(VP) (VP < VBN|VBD > (VP < (/^(VB|AUX)/ < /be|was|is|are|were|been|being|'s|'re|'m|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/))) !$-- NP))]]></compile>
+      <pretty><![CDATA[Root S
+   < SBAR|S=target
+      and
+         !$+ /^,$/
+         $++ VP
+            and
+               <+(VP) VP
+                  and
+                     < VBN|VBD
+                     > VP
+                        < /^(VB|AUX)/
+                           < /be|was|is|are|were|been|being|'s|'re|'m|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/
+               !$-- NP]]></pretty>
+    </targetpattern>
+    <example>
+      <text>That she lied was suspected by everyone</text>
+      <coding>csubjpass(suspected, lied)</coding>
+    </example>
+  </relation>
+  <relation id="comp">
+    <name>COMPLEMENT</name>
+    <shortname>comp</shortname>
+    <longname>complement</longname>
+    <parent>arg</parent>
+    <description>The "complement" grammatical relation. A complement of a VP is any object (direct or indirect) of that VP, or a clause or adjectival phrase which functions like an object; a complement of a clause is an complement of the VP which is the predicate of that clause.</description>
+    <example>
+      <text>She gave me a raise</text>
+      <coding>comp(gave, me), comp(gave, a raise)</coding>
+    </example>
+    <example>
+      <text>I like to swim</text>
+      <coding>comp(like, to swim)</coding>
+    </example>
+  </relation>
+  <relation id="obj">
+    <name>OBJECT</name>
+    <shortname>obj</shortname>
+    <longname>object</longname>
+    <parent>comp</parent>
+    <description>The "object" grammatical relation. An object of a VP is any direct object or indirect object of that VP; an object of a clause is an object of the VP which is the predicate of that clause.</description>
+    <example>
+      <text>She gave me a raise</text>
+      <coding>obj(gave, me), obj(gave, raise)</coding>
+    </example>
+  </relation>
+  <relation id="dobj">
+    <name>DIRECT_OBJECT</name>
+    <shortname>dobj</shortname>
+    <longname>direct object</longname>
+    <parent>obj</parent>
+    <description>The "direct object" grammatical relation. The direct object of a VP is the noun phrase which is the (accusative) object of the verb; the direct object of a clause is the direct object of the VP which is the predicate of that clause.</description>
+    <sourcepattern><![CDATA[SBARQ|VP|SBAR]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (NP $+ (/^(NP|WHNP)$/=target !< (/^NN/ < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter|lot$/))) !<(/^VB/ < /^(am|is|are|being|Being|be|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/) ]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      < NP
+         $+ /^(NP|WHNP)$/=target
+            !< /^NN/
+               < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter|lot$/
+      !< /^VB/
+         < /^(am|is|are|being|Being|be|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (NP < (NP $+ (/^(NP|WHNP)$/=target !< (/^NN/ < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter|lot$/))))!< (/^VB/ < /^(am|is|are|be|being|Being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/)]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      < NP
+         < NP
+            $+ /^(NP|WHNP)$/=target
+               !< /^NN/
+                  < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter|lot$/
+      !< /^VB/
+         < /^(am|is|are|be|being|Being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP !<(/^VB/ < /^(am|is|are|be|being|Being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/) < (/^(NP|WHNP)$/=target !< (/^NN/ < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/) !$+ NP)]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      !< /^VB/
+         < /^(am|is|are|be|being|Being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/
+      < /^(NP|WHNP)$/=target
+         and
+            !< /^NN/
+               < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/
+            !$+ NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP !<(/^VB/ < /^(am|is|are|be|being|Being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/) < (/^(NP|WHNP)$/=target $+ NP-TMP)]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      !< /^VB/
+         < /^(am|is|are|be|being|Being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/
+      < /^(NP|WHNP)$/=target
+         $+ NP-TMP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP !<(/^VB/ < /^(am|is|are|be|being|Being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/) < (/^(NP|WHNP)$/=target $+ (NP < (/^NN/ < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/)))]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      !< /^VB/
+         < /^(am|is|are|be|being|Being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/
+      < /^(NP|WHNP)$/=target
+         $+ NP
+            < /^NN/
+               < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SBARQ <, (WHNP=target !< WRB) << (VP !< (S < (VP < TO)) $-- NP)]]></compile>
+      <pretty><![CDATA[Root SBARQ
+   and
+      <1 WHNP=target
+         !< WRB
+      << VP
+         and
+            !< S
+               < VP
+                  < TO
+            $-- NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SBAR <, (WHNP=target !< WRB) < (S < NP < (VP !< SBAR !< (S < (VP < TO))))]]></compile>
+      <pretty><![CDATA[Root SBAR
+   and
+      <1 WHNP=target
+         !< WRB
+      < S
+         and
+            < NP
+            < VP
+               and
+                  !< SBAR
+                  !< S
+                     < VP
+                        < TO]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SBAR !< WHNP < (S < (NP $++ (VP !$++ NP))) > (VP > (S < NP $- WHNP=target))]]></compile>
+      <pretty><![CDATA[Root SBAR
+   and
+      !< WHNP
+      < S
+         < NP
+            $++ VP
+               !$++ NP
+      > VP
+         > S
+            and
+               < NP
+               $- WHNP=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>She gave me a raise</text>
+      <coding>dobj(gave, raise)</coding>
+    </example>
+  </relation>
+  <relation id="iobj">
+    <name>INDIRECT_OBJECT</name>
+    <shortname>iobj</shortname>
+    <longname>indirect object</longname>
+    <parent>obj</parent>
+    <description>The "indirect object" grammatical relation. The indirect object of a VP is the noun phrase which is the (dative) object of the verb; the indirect object of a clause is the indirect object of the VP which is the predicate of that clause.</description>
+    <sourcepattern><![CDATA[VP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (NP=target !< /\$/ !< (/^NN/ < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/) $+ (NP !< (/^NN/ < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/)))]]></compile>
+      <pretty><![CDATA[Root VP
+   < NP=target
+      and
+         !< /\$/
+         !< /^NN/
+            < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/
+         $+ NP
+            !< /^NN/
+               < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (NP=target < (NP !< /\$/ $++ (NP !< (/^NN/ < /^lot$/)) !$ CC !$ CONJP !$ /^,$/ !$++ /^:$/))]]></compile>
+      <pretty><![CDATA[Root VP
+   < NP=target
+      < NP
+         and
+            !< /\$/
+            $++ NP
+               !< /^NN/
+                  < /^lot$/
+            !$ CC
+            !$ CONJP
+            !$ /^,$/
+            !$++ /^:$/]]></pretty>
+    </targetpattern>
+    <example>
+      <text>She gave me a raise</text>
+      <coding>iobj(gave, me)</coding>
+    </example>
+  </relation>
+  <relation id="pobj">
+    <name>PREPOSITIONAL_OBJECT</name>
+    <shortname>pobj</shortname>
+    <longname>prepositional object</longname>
+    <parent>obj</parent>
+    <description>The "prepositional object" grammatical relation. The object of a preposition is the head of a noun phrase following the preposition. (The preposition in turn may be modifying a noun, verb, etc.) We here define cases of VBG quasi-prepositions like "including", "concerning", etc. as instances of pobj.</description>
+    <sourcepattern><![CDATA[^PP(?:-TMP)?$]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^PP(?:-TMP)?$/ < /^IN|VBG|TO|FW/ < /^NP(?:-TMP)?$/=target]]></compile>
+      <pretty><![CDATA[Root /^PP(?:-TMP)?$/
+   and
+      < /^IN|VBG|TO|FW/
+      < /^NP(?:-TMP)?$/=target]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^PP(?:-TMP)?$/ < (/^IN|VBG|TO/ $+ (ADVP=target < (ADVP < /^NP(?:-TMP)?$/)))]]></compile>
+      <pretty><![CDATA[Root /^PP(?:-TMP)?$/
+   < /^IN|VBG|TO/
+      $+ ADVP=target
+         < ADVP
+            < /^NP(?:-TMP)?$/]]></pretty>
+    </targetpattern>
+    <example>
+      <text>I sat on the chair</text>
+      <coding>pobj(on, chair) &lt;p/&gt; (The preposition can be called a FW for pace, versus, etc.  It can also be called a CC - but we don't currently handle that and would need to distinguish from conjoined PPs.)</coding>
+    </example>
+  </relation>
+  <relation id="pcomp">
+    <name>PREPOSITIONAL_COMPLEMENT</name>
+    <shortname>pcomp</shortname>
+    <longname>prepositional complement</longname>
+    <parent>obj</parent>
+    <description>The "prepositional complement" grammatical relation. The prepositional complement of a preposition is the head of a sentence following the preposition.</description>
+    <sourcepattern><![CDATA[^PP(?:-TMP)?$]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^PP(?:-TMP)?$/ < (IN|VBG $+ SBAR|S=target)]]></compile>
+      <pretty><![CDATA[Root /^PP(?:-TMP)?$/
+   < IN|VBG
+      $+ SBAR|S=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>We have no useful information on whether users are at risk</text>
+      <coding>pcomp(on, are)</coding>
+    </example>
+    <example>
+      <text>They heard about you missing classes.</text>
+      <coding>pcomp(about, missing)</coding>
+    </example>
+  </relation>
+  <relation id="attr">
+    <name>ATTRIBUTIVE</name>
+    <shortname>attr</shortname>
+    <longname>attributive</longname>
+    <parent>comp</parent>
+    <description>The "attributive" grammatical relation. The attributive is the complement of a verb such as "to be, to seem, to appear".</description>
+    <sourcepattern><![CDATA[VP|SBARQ|SQ]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP !$ (NP < EX) < NP=target <(/^VB/ < /^(am|is|are|be|being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/)]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      !$ NP
+         < EX
+      < NP=target
+      < /^VB/
+         < /^(am|is|are|be|being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SBARQ < (WHNP=target $+ (SQ < (/^VB/ < /^(am|is|are|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/ !$++ (VP < VBG))))]]></compile>
+      <pretty><![CDATA[Root SBARQ
+   < WHNP=target
+      $+ SQ
+         < /^VB/
+            and
+               < /^(am|is|are|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/
+               !$++ VP
+                  < VBG]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SQ <, (/^VB/ < /^(Am|am|Is|is|Are|are|be|being|'s|'re|'m|Was|was|Were|were)$/) < (NP=target $-- (NP !< EX))]]></compile>
+      <pretty><![CDATA[Root SQ
+   and
+      <1 /^VB/
+         < /^(Am|am|Is|is|Are|are|be|being|'s|'re|'m|Was|was|Were|were)$/
+      < NP=target
+         $-- NP
+            !< EX]]></pretty>
+    </targetpattern>
+  </relation>
+  <relation id="ccomp">
+    <name>CLAUSAL_COMPLEMENT</name>
+    <shortname>ccomp</shortname>
+    <longname>clausal complement</longname>
+    <parent>comp</parent>
+    <description>The "clausal complement" grammatical relation. A clausal complement of a VP or an ADJP is a clause with internal subject which functions like an object of the verb or of the adjective; a clausal complement of a clause is the clausal complement of the VP or of the ADJP which is the predicate of that clause. Such clausal complements are usually finite (though there are occasional remnant English subjunctives).</description>
+    <sourcepattern><![CDATA[VP|SINV|S|ADJP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (S=target < (VP !<, TO|VBG) !$-- NP)]]></compile>
+      <pretty><![CDATA[Root VP
+   < S=target
+      and
+         < VP
+            !<1 TO|VBG
+         !$-- NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (SBAR=target < (S <+(S) VP) <, (IN|DT < /^(that|whether)$/))]]></compile>
+      <pretty><![CDATA[Root VP
+   < SBAR=target
+      and
+         < S
+            <+(S) VP
+         <1 IN|DT
+            < /^(that|whether)$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (SBAR=target < (S < VP) !$-- NP !<, IN)]]></compile>
+      <pretty><![CDATA[Root VP
+   < SBAR=target
+      and
+         < S
+            < VP
+         !$-- NP
+         !<1 IN]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S|SINV < (S|SBARQ=target $+ /^(,|.|'')$/ !$- /^:|CC$/ !< (VP < TO|VBG))]]></compile>
+      <pretty><![CDATA[Root S|SINV
+   < S|SBARQ=target
+      and
+         $+ /^(,|.|'')$/
+         !$- /^:|CC$/
+         !< VP
+            < TO|VBG]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[ADJP < (SBAR=target < (S < VP))]]></compile>
+      <pretty><![CDATA[Root ADJP
+   < SBAR=target
+      < S
+         < VP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S <, (SBAR=target <, (IN < /^([Tt]hat|[Ww]hether)$/) !$+ VP)]]></compile>
+      <pretty><![CDATA[Root S
+   <1 SBAR=target
+      and
+         <1 IN
+            < /^([Tt]hat|[Ww]hether)$/
+         !$+ VP]]></pretty>
+    </targetpattern>
+    <example>
+      <text>He says that you like to swim</text>
+      <coding>ccomp(says, like)</coding>
+    </example>
+    <example>
+      <text>I am certain that he did it</text>
+      <coding>ccomp(certain, did)</coding>
+    </example>
+  </relation>
+  <relation id="xcomp">
+    <name>XCLAUSAL_COMPLEMENT</name>
+    <shortname>xcomp</shortname>
+    <longname>xclausal complement</longname>
+    <parent>comp</parent>
+    <description>An open clausal complement (xcomp) of a VP or an ADJP is a clausal complement without its own subject, whose reference is determined by an external subject. These complements are always non-finite. The name xcomp is borrowed from Lexical-Functional Grammar. (Only "TO-clause" are recognized.)</description>
+    <sourcepattern><![CDATA[VP|ADJP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP !> (VP < (VB < be)) < (S=target !$- (NN < /^order$/) < (VP < TO))]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      !> VP
+         < VB
+            < be
+      < S=target
+         and
+            !$- NN
+               < /^order$/
+            < VP
+               < TO]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[ADJP < (S=target <, (VP <, TO))]]></compile>
+      <pretty><![CDATA[Root ADJP
+   < S=target
+      <1 VP
+         <1 TO]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (S=target !$- (NN < /^order$/) < (NP $+ NP|ADJP))]]></compile>
+      <pretty><![CDATA[Root VP
+   < S=target
+      and
+         !$- NN
+            < /^order$/
+         < NP
+            $+ NP|ADJP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (/^VB/ $+ (VP=target < VB < NP))]]></compile>
+      <pretty><![CDATA[Root VP
+   < /^VB/
+      $+ VP=target
+         and
+            < VB
+            < NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP !> (VP < (VB < be)) < (SBAR=target < (S !$- (NN < /^order$/) < (VP < TO)))]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      !> VP
+         < VB
+            < be
+      < SBAR=target
+         < S
+            and
+               !$- NN
+                  < /^order$/
+               < VP
+                  < TO]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP > VP < (S=target !$- (NN < /^order$/) <: NP)]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      > VP
+      < S=target
+         and
+            !$- NN
+               < /^order$/
+            <: NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (S=target !< NP < (VP < VBG))]]></compile>
+      <pretty><![CDATA[Root VP
+   < S=target
+      and
+         !< NP
+         < VP
+            < VBG]]></pretty>
+    </targetpattern>
+    <example>
+      <text>I like to swim</text>
+      <coding>xcomp(like, swim)</coding>
+    </example>
+    <example>
+      <text>I am ready to leave</text>
+      <coding>xcomp(ready, leave)</coding>
+    </example>
+  </relation>
+  <relation id="complm">
+    <name>COMPLEMENTIZER</name>
+    <shortname>complm</shortname>
+    <longname>complementizer</longname>
+    <parent>comp</parent>
+    <description>The "complementizer" grammatical relation. A complementizer of a clausal complement is the word introducing it.</description>
+    <sourcepattern><![CDATA[SBAR]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[SBAR <, (IN|DT=target < /^(that|whether)$/) $-- /^VB/]]></compile>
+      <pretty><![CDATA[Root SBAR
+   and
+      <1 IN|DT=target
+         < /^(that|whether)$/
+      $-- /^VB/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SBAR <, (IN|DT=target < /^(that|whether)$/) $- NP]]></compile>
+      <pretty><![CDATA[Root SBAR
+   and
+      <1 IN|DT=target
+         < /^(that|whether)$/
+      $- NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SBAR <, (IN|DT=target < /^(that|whether)$/) > ADJP|PP]]></compile>
+      <pretty><![CDATA[Root SBAR
+   and
+      <1 IN|DT=target
+         < /^(that|whether)$/
+      > ADJP|PP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SBAR <, (IN|DT=target < /^(That|Whether)$/)]]></compile>
+      <pretty><![CDATA[Root SBAR
+   <1 IN|DT=target
+      < /^(That|Whether)$/]]></pretty>
+    </targetpattern>
+    <example>
+      <text>He says that you like to swim</text>
+      <coding>complm(like, that)</coding>
+    </example>
+  </relation>
+  <relation id="mark">
+    <name>MARKER</name>
+    <shortname>mark</shortname>
+    <longname>marker</longname>
+    <parent>comp</parent>
+    <description>The "marker" grammatical relation. A marker of an adverbial clausal complement is the word introducing it.</description>
+    <sourcepattern><![CDATA[^SBAR(?:-TMP)?$]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^SBAR(?:-TMP)?$/ <, (IN=target !< /^([Tt]hat|[Ww]hether)$/) < S|FRAG]]></compile>
+      <pretty><![CDATA[Root /^SBAR(?:-TMP)?$/
+   and
+      <1 IN=target
+         !< /^([Tt]hat|[Ww]hether)$/
+      < S|FRAG]]></pretty>
+    </targetpattern>
+    <example>
+      <text>U.S. forces have been engaged in intense fighting after insurgents launched simultaneous attacks</text>
+      <coding>mark(launched, after)</coding>
+    </example>
+  </relation>
+  <relation id="rel">
+    <name>RELATIVE</name>
+    <shortname>rel</shortname>
+    <longname>relative</longname>
+    <parent>comp</parent>
+    <description>The "relative" grammatical relation. A relative of a relative clause is the head word of the WH-phrase introducing it.</description>
+    <sourcepattern><![CDATA[SBAR]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[SBAR <, /^WH/=target > NP]]></compile>
+      <pretty><![CDATA[Root SBAR
+   and
+      <1 /^WH/=target
+      > NP]]></pretty>
+    </targetpattern>
+    <example>
+      <text>I saw the man that you love</text>
+      <coding>rel(love, that)</coding>
+    </example>
+    <example>
+      <text>I saw the man whose wife you love</text>
+      <coding>rel(love, wife)</coding>
+    </example>
+  </relation>
+  <relation id="ref">
+    <name>REFERENT</name>
+    <shortname>ref</shortname>
+    <longname>referent</longname>
+    <parent>dep</parent>
+    <description>The "referent" grammatical relation. A referent of the head of a NP is the relative word introducing the relative clause modifying the NP.</description>
+    <sourcepattern><![CDATA[NP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[NP $+ (SBAR < (WHNP=target !< /^WP\$/)) > NP]]></compile>
+      <pretty><![CDATA[Root NP
+   and
+      $+ SBAR
+         < WHNP=target
+            !< /^WP\$/
+      > NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[NP $+ (SBAR < (WHPP < (WHNP=target !< /^WP\$/))) > NP]]></compile>
+      <pretty><![CDATA[Root NP
+   and
+      $+ SBAR
+         < WHPP
+            < WHNP=target
+               !< /^WP\$/
+      > NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[NP $+ (/^(,|PP|PRN)$/ $+ (SBAR < (WHNP=target !< /^WP\$/)))]]></compile>
+      <pretty><![CDATA[Root NP
+   $+ /^(,|PP|PRN)$/
+      $+ SBAR
+         < WHNP=target
+            !< /^WP\$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[NP $+ (/^(,|PP|PRN)$/ $+ (SBAR < (WHPP < (WHNP=target !< /^WP\$/)))) > NP]]></compile>
+      <pretty><![CDATA[Root NP
+   and
+      $+ /^(,|PP|PRN)$/
+         $+ SBAR
+            < WHPP
+               < WHNP=target
+                  !< /^WP\$/
+      > NP]]></pretty>
+    </targetpattern>
+    <example>
+      <text>I saw the book which you bought</text>
+      <coding>ref(book, which)</coding>
+    </example>
+  </relation>
+  <relation id="expl">
+    <name>EXPLETIVE</name>
+    <shortname>expl</shortname>
+    <longname>expletive</longname>
+    <parent>dep</parent>
+    <description>The "expletive" grammatical relation. This relation captures an existential there.</description>
+    <sourcepattern><![CDATA[S|SQ]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[S|SQ < (NP=target < EX)]]></compile>
+      <pretty><![CDATA[Root S|SQ
+   < NP=target
+      < EX]]></pretty>
+    </targetpattern>
+    <example>
+      <text>There is a statue in the corner</text>
+      <coding>expl(is, there)</coding>
+    </example>
+  </relation>
+  <relation id="acomp">
+    <name>ADJECTIVAL_COMPLEMENT</name>
+    <shortname>acomp</shortname>
+    <longname>adjectival complement</longname>
+    <parent>comp</parent>
+    <description>The "adjectival complement" grammatical relation. An adjectival complement of a VP is an adjectival phrase which functions as the complement (like an object of the verb); an adjectival complement of a clause is the adjectival complement of the VP which is the predicate of that clause.</description>
+    <sourcepattern><![CDATA[VP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (ADJP=target !$-- NP)]]></compile>
+      <pretty><![CDATA[Root VP
+   < ADJP=target
+      !$-- NP]]></pretty>
+    </targetpattern>
+    <example>
+      <text>She looks very beautiful</text>
+      <coding>acomp(looks, beautiful)</coding>
+    </example>
+  </relation>
+  <relation id="mod">
+    <name>MODIFIER</name>
+    <shortname>mod</shortname>
+    <longname>modifier</longname>
+    <parent>dep</parent>
+    <description>The "modifier" grammatical relation. A modifier of a VP is any constituent that serves to modify the meaning of the VP (but is not an &lt;code&gt;ARGUMENT&lt;/code&gt; of that VP); a modifier of a clause is an modifier of the VP which is the predicate of that clause.</description>
+    <example>
+      <text>Last night, I swam in the pool</text>
+      <coding>mod(swam, in the pool), mod(swam, last night)</coding>
+    </example>
+  </relation>
+  <relation id="advcl">
+    <name>ADV_CLAUSE_MODIFIER</name>
+    <shortname>advcl</shortname>
+    <longname>adverbial clause modifier</longname>
+    <parent>mod</parent>
+    <description>The "adverbial clause modifier" grammatical relation. An adverbial clause modifier of a VP is a clause modifying the verb (temporal clauses, consequences, conditional clauses, etc.).</description>
+    <sourcepattern><![CDATA[VP|S|SQ]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (/^SBAR(?:-TMP)?$/=target <, (IN !< /^([Tt]hat|[Ww]hether)$/ !$+ (NN < /^order$/)))]]></compile>
+      <pretty><![CDATA[Root VP
+   < /^SBAR(?:-TMP)?$/=target
+      <1 IN
+         and
+            !< /^([Tt]hat|[Ww]hether)$/
+            !$+ NN
+               < /^order$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S|SQ <, (/^SBAR(?:-TMP)?$/=target <, (IN !< /^([Tt]hat|[Ww]hether)$/ !$+ (NN < /^order$/)) !$+ VP)]]></compile>
+      <pretty><![CDATA[Root S|SQ
+   <1 /^SBAR(?:-TMP)?$/=target
+      and
+         <1 IN
+            and
+               !< /^([Tt]hat|[Ww]hether)$/
+               !$+ NN
+                  < /^order$/
+         !$+ VP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S|SQ <, (/^SBAR(?:-TMP)?$/=target <2 (IN !< /^([Tt]hat|[Ww]hether)$/ !$+ (NN < /^order$/)))]]></compile>
+      <pretty><![CDATA[Root S|SQ
+   <1 /^SBAR(?:-TMP)?$/=target
+      <2 IN
+         and
+            !< /^([Tt]hat|[Ww]hether)$/
+            !$+ NN
+               < /^order$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (/^SBAR(?:-TMP)?$/=target <, (WHADVP|WHNP < WRB))]]></compile>
+      <pretty><![CDATA[Root VP
+   < /^SBAR(?:-TMP)?$/=target
+      <1 WHADVP|WHNP
+         < WRB]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S|SQ <, (/^SBAR(?:-TMP)$/=target <, (WHADVP|WHNP < WRB))]]></compile>
+      <pretty><![CDATA[Root S|SQ
+   <1 /^SBAR(?:-TMP)$/=target
+      <1 WHADVP|WHNP
+         < WRB]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S|SQ <, (PP=target <, RB)]]></compile>
+      <pretty><![CDATA[Root S|SQ
+   <1 PP=target
+      <1 RB]]></pretty>
+    </targetpattern>
+    <example>
+      <text>The accident happened as the night was falling</text>
+      <coding>advcl(happened, falling)</coding>
+    </example>
+    <example>
+      <text>If you know who did it, you should tell the teacher</text>
+      <coding>advcl(tell, know)</coding>
+    </example>
+  </relation>
+  <relation id="purpcl">
+    <name>PURPOSE_CLAUSE_MODIFIER</name>
+    <shortname>purpcl</shortname>
+    <longname>purpose clause modifier</longname>
+    <parent>mod</parent>
+    <description>The "purpose clause modifier" grammatical relation. A purpose clause modifier of a VP is a clause headed by "(in order) to" specifying a purpose. Note: at present we only recognize ones that have "in order to" as otherwise we can't give our surface representations distinguish these from xcomp's. We can also recognize "to" clauses introduced by "be VBN".</description>
+    <sourcepattern><![CDATA[VP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (/^SBAR/=target < (IN < in) < (NN < order) < (S < (VP < TO)))]]></compile>
+      <pretty><![CDATA[Root VP
+   < /^SBAR/=target
+      and
+         < IN
+            < in
+         < NN
+            < order
+         < S
+            < VP
+               < TO]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP > (VP < (VB < be)) < (S=target !$- /^,$/ < (VP < TO|VBG) !$-- NP)]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      > VP
+         < VB
+            < be
+      < S=target
+         and
+            !$- /^,$/
+            < VP
+               < TO|VBG
+            !$-- NP]]></pretty>
+    </targetpattern>
+    <example>
+      <text>He talked to the president in order to secure the account</text>
+      <coding>purpcl(talked, secure)</coding>
+    </example>
+  </relation>
+  <relation id="tmod">
+    <name>TEMPORAL_MODIFIER</name>
+    <shortname>tmod</shortname>
+    <longname>temporal modifier</longname>
+    <parent>mod</parent>
+    <description>The "temporal modifier" grammatical relation. A temporal modifier of a VP or an ADJP is any constituent that serves to modify the meaning of the VP or the ADJP by specifying a time; a temporal modifier of a clause is an temporal modifier of the VP which is the predicate of that clause.</description>
+    <sourcepattern><![CDATA[VP|S|ADJP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP|ADJP < /^NP-TMP$/=target]]></compile>
+      <pretty><![CDATA[Root VP|ADJP
+   < /^NP-TMP$/=target]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (NP=target < (/^NN/ < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/))]]></compile>
+      <pretty><![CDATA[Root VP
+   < NP=target
+      < /^NN/
+         < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S < (/^NP-TMP$/=target $++ (NP $++ VP))]]></compile>
+      <pretty><![CDATA[Root S
+   < /^NP-TMP$/=target
+      $++ NP
+         $++ VP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S < (NP=target < (/^NN/ < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/) $++ (NP $++ VP))]]></compile>
+      <pretty><![CDATA[Root S
+   < NP=target
+      and
+         < /^NN/
+            < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/
+         $++ NP
+            $++ VP]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Last night, I swam in the pool</text>
+      <coding>tmod(swam, night)</coding>
+    </example>
+  </relation>
+  <relation id="rcmod">
+    <name>RELATIVE_CLAUSE_MODIFIER</name>
+    <shortname>rcmod</shortname>
+    <longname>relative clause modifier</longname>
+    <parent>mod</parent>
+    <description>The "relative clause modifier" grammatical relation. A relative clause modifier of an NP is a relative clause modifying the NP. The link points from the head noun of the NP to the head of the relative clause, normally a verb.</description>
+    <sourcepattern><![CDATA[NP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[NP $++ (SBAR=target <+(SBAR) WHPP|WHNP) > NP]]></compile>
+      <pretty><![CDATA[Root NP
+   and
+      $++ SBAR=target
+         <+(SBAR) WHPP|WHNP
+      > NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[NP $++ (SBAR=target <: (S !<, (VP <, TO))) > NP]]></compile>
+      <pretty><![CDATA[Root NP
+   and
+      $++ SBAR=target
+         <: S
+            !<1 VP
+               <1 TO
+      > NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[NP $++ (SBAR=target < (WHADVP < (WRB </^(where|why)/))) > NP]]></compile>
+      <pretty><![CDATA[Root NP
+   and
+      $++ SBAR=target
+         < WHADVP
+            < WRB
+               < /^(where|why)/
+      > NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[NP $++ RRC=target]]></compile>
+      <pretty><![CDATA[Root NP
+   $++ RRC=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>I saw the man you love</text>
+      <coding>rcmod(man, love)</coding>
+    </example>
+    <example>
+      <text>I saw the book which you bought</text>
+      <coding>rcmod(book, bought)</coding>
+    </example>
+  </relation>
+  <relation id="amod">
+    <name>ADJECTIVAL_MODIFIER</name>
+    <shortname>amod</shortname>
+    <longname>adjectival modifier</longname>
+    <parent>mod</parent>
+    <description>The "adjectival modifier" grammatical relation. An adjectival modifier of an NP is any adjectival phrase that serves to modify the meaning of the NP.</description>
+    <sourcepattern><![CDATA[^NP(?:-TMP|-ADV)?|NX|WHNP$]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?|NX|WHNP$/ < (ADJP|WHADJP|JJ|JJR|JJS|VBN|VBG|VBD=target !< QP !$- CC)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?|NX|WHNP$/
+   < ADJP|WHADJP|JJ|JJR|JJS|VBN|VBG|VBD=target
+      and
+         !< QP
+         !$- CC]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Sam eats red meat</text>
+      <coding>amod(meat, red)</coding>
+    </example>
+  </relation>
+  <relation id="num">
+    <name>NUMERIC_MODIFIER</name>
+    <shortname>num</shortname>
+    <longname>numeric modifier</longname>
+    <parent>mod</parent>
+    <description>The "numeric modifier" grammatical relation. A numeric modifier of an NP is any number phrase that serves to modify the meaning of the NP.</description>
+    <sourcepattern><![CDATA[NP(?:-TMP|-ADV)?]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (CD|QP=target !$- CC)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < CD|QP=target
+      !$- CC]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (ADJP=target <: QP)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < ADJP=target
+      <: QP]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Sam eats 3 sheep</text>
+      <coding>num(sheep, 3)</coding>
+    </example>
+  </relation>
+  <relation id="number">
+    <name>NUMBER_MODIFIER</name>
+    <shortname>number</shortname>
+    <longname>compound number modifier</longname>
+    <parent>mod</parent>
+    <description>The "compound number modifier" grammatical relation. A compound number modifier is a part of a number phrase or currency amount.</description>
+    <sourcepattern><![CDATA[QP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[QP < (CD=target !$- CC)]]></compile>
+      <pretty><![CDATA[Root QP
+   < CD=target
+      !$- CC]]></pretty>
+    </targetpattern>
+    <example>
+      <text>I lost $ 3.2 billion</text>
+      <coding>number($, billion)</coding>
+    </example>
+  </relation>
+  <relation id="quantmod">
+    <name>QUANTIFIER_MODIFIER</name>
+    <shortname>quantmod</shortname>
+    <longname>quantifier modifier</longname>
+    <parent>mod</parent>
+    <description>The "quantifier phrase modifier" grammatical relation. A quantifier modifier is an element modifying the head of a QP constituent.</description>
+    <sourcepattern><![CDATA[QP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[QP < /^IN|RB|DT|JJ|XS$/=target]]></compile>
+      <pretty><![CDATA[Root QP
+   < /^IN|RB|DT|JJ|XS$/=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>About 200 people came to the party</text>
+      <coding>quantmod(200, About)</coding>
+    </example>
+  </relation>
+  <relation id="nn">
+    <name>NOUN_COMPOUND_MODIFIER</name>
+    <shortname>nn</shortname>
+    <longname>nn modifier</longname>
+    <parent>mod</parent>
+    <description>The "noun compound modifier" grammatical relation. A noun compound modifier of an NP is any noun that serves to modify the head noun. Note that this has all nouns modify the rightmost a la Penn headship rules. There is no intelligent noun compound analysis.</description>
+    <sourcepattern><![CDATA[^NP(?:-TMP|-ADV)?$]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (NP|NN|NNS|NNP|NNPS|FW=target $++ NN|NNS|NNP|NNPS|FW|CD !<- POS !$- /^,$/ )]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < NP|NN|NNS|NNP|NNPS|FW=target
+      and
+         $++ NN|NNS|NNP|NNPS|FW|CD
+         !<-1 POS
+         !$- /^,$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (NP|NN|NNS|NNP|NNPS|FW=target !<- POS $+ JJ|JJR|JJS) <# NN|NNS|NNP|NNPS !<- POS]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   and
+      < NP|NN|NNS|NNP|NNPS|FW=target
+         and
+            !<-1 POS
+            $+ JJ|JJR|JJS
+      <# NN|NNS|NNP|NNPS
+      !<-1 POS]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Oil price futures</text>
+      <coding>nn(futures, oil), nn(futures, price)</coding>
+    </example>
+  </relation>
+  <relation id="appos">
+    <name>APPOSITIONAL_MODIFIER</name>
+    <shortname>appos</shortname>
+    <longname>appositional modifier</longname>
+    <parent>mod</parent>
+    <description>The "appositional modifier" grammatical relation. An appositional modifier of an NP is an NP that serves to modify the meaning of the NP. It includes parenthesized examples</description>
+    <sourcepattern><![CDATA[^NP(?:-TMP|-ADV)?$]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (NP=target $- /^,$/ $-- NP !$ CC|CONJP)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < NP=target
+      and
+         $- /^,$/
+         $-- NP
+         !$ CC|CONJP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (PRN=target < (NP < /^NNS?|CD$/ $-- /^-LRB-$/ $+ /^-RRB-$/))]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < PRN=target
+      < NP
+         and
+            < /^NNS?|CD$/
+            $-- /^-LRB-$/
+            $+ /^-RRB-$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (NNP $+ (/^,$/ $+ NNP=target)) !< CC|CONJP]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   and
+      < NNP
+         $+ /^,$/
+            $+ NNP=target
+      !< CC|CONJP]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Sam, my brother, eats red meat</text>
+      <coding>appos(Sam, brother)</coding>
+    </example>
+    <example>
+      <text>Bill (John's cousin)</text>
+      <coding>appos(Bill, cousin)</coding>
+    </example>
+  </relation>
+  <relation id="abbrev">
+    <name>ABBREVIATION_MODIFIER</name>
+    <shortname>abbrev</shortname>
+    <longname>abbreviation modifier</longname>
+    <parent>appos</parent>
+    <description>The "abbreviation modifier" grammatical relation. An abbreviation modifier of an NP is a parenthesized NP that serves to abbreviate the NP (or to define an abbreviation).</description>
+    <sourcepattern><![CDATA[^NP(?:-TMP|-ADV)?$]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (PRN=target < (NP < NNP $- /^-LRB-$/ $+ /^-RRB-$/))]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < PRN=target
+      < NP
+         and
+            < NNP
+            $- /^-LRB-$/
+            $+ /^-RRB-$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (PRN=target < (NNP $- /^-LRB-$/ $+ /^-RRB-$/))]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < PRN=target
+      < NNP
+         and
+            $- /^-LRB-$/
+            $+ /^-RRB-$/]]></pretty>
+    </targetpattern>
+    <example>
+      <text>The Australian Broadcasting Corporation (ABC)</text>
+      <coding>abbrev(Corporation, ABC)</coding>
+    </example>
+  </relation>
+  <relation id="partmod">
+    <name>PARTICIPIAL_MODIFIER</name>
+    <shortname>partmod</shortname>
+    <longname>participial modifier</longname>
+    <parent>mod</parent>
+    <description>The "participial modifier" grammatical relation. A participial modifier of an NP or VP is a VP[part] that serves to modify the meaning of the NP or VP.</description>
+    <sourcepattern><![CDATA[^NP(?:-TMP|-ADV)?|VP|S$]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (VP=target < VBG|VBN $-- NP)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < VP=target
+      and
+         < VBG|VBN
+         $-- NP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (/^,$/ $+ (VP=target <, VBG|VBN))]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < /^,$/
+      $+ VP=target
+         <1 VBG|VBN]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S <, (NP $+ (/^,$/ $+ (S=target < (VP <, VBG|VBN))))]]></compile>
+      <pretty><![CDATA[Root S
+   <1 NP
+      $+ /^,$/
+         $+ S=target
+            < VP
+               <1 VBG|VBN]]></pretty>
+    </targetpattern>
+    <example>
+      <text>truffles picked during the spring are tasty</text>
+      <coding>partmod(truffles, picked)</coding>
+    </example>
+    <example>
+      <text>Bill picked Fred for the team demonstrating his incompetence</text>
+      <coding>partmod(picked, demonstrating)</coding>
+    </example>
+  </relation>
+  <relation id="infmod">
+    <name>INFINITIVAL_MODIFIER</name>
+    <shortname>infmod</shortname>
+    <longname>infinitival modifier</longname>
+    <parent>mod</parent>
+    <description>The "infinitival modifier" grammatical relation. An infinitival modifier of an NP is an S/VP that serves to modify the meaning of the NP.</description>
+    <sourcepattern><![CDATA[^NP(?:-TMP|-ADV)?$]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-[A-Z]+)?$/ < (S=target < (VP < TO) $-- /^NP|NNP?S?$/)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-[A-Z]+)?$/
+   < S=target
+      and
+         < VP
+            < TO
+         $-- /^NP|NNP?S?$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-[A-Z]+)?$/ < (SBAR=target < (S < (VP < TO)) $-- /^NP|NNP?S?$/)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-[A-Z]+)?$/
+   < SBAR=target
+      and
+         < S
+            < VP
+               < TO
+         $-- /^NP|NNP?S?$/]]></pretty>
+    </targetpattern>
+    <example>
+      <text>points to establish are ...</text>
+      <coding>infmod(points, establish)</coding>
+    </example>
+  </relation>
+  <relation id="advmod">
+    <name>ADVERBIAL_MODIFIER</name>
+    <shortname>advmod</shortname>
+    <longname>adverbial modifier</longname>
+    <parent>mod</parent>
+    <description>The "adverbial modifier" grammatical relation. An adverbial modifier of a word is a (non-clausal) RB or ADVP that serves to modify the meaning of the word.</description>
+    <sourcepattern><![CDATA[VP|ADJP|WHADJP|ADVP|WHADVP|S|SBAR|SINV|SQ|SBARQ|XS|NP(?:-TMP|-ADV)?|RRC]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^VP|ADJP|WHADJP|S|SBAR|SINV|SQ|XS|NP(?:-TMP|-ADV)?|RRC$/ < (RB|RBR|RBS|WRB|ADVP|WHADVP=target !< /^(?i:not|n't|never)$/)]]></compile>
+      <pretty><![CDATA[Root /^VP|ADJP|WHADJP|S|SBAR|SINV|SQ|XS|NP(?:-TMP|-ADV)?|RRC$/
+   < RB|RBR|RBS|WRB|ADVP|WHADVP=target
+      !< /^(?i:not|n't|never)$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[ADVP|WHADVP < (RB|RBR|RBS|WRB|ADVP|WHADVP|JJ=target !< /^(?i:not|n't|never)$/) !< CC !< CONJP]]></compile>
+      <pretty><![CDATA[Root ADVP|WHADVP
+   and
+      < RB|RBR|RBS|WRB|ADVP|WHADVP|JJ=target
+         !< /^(?i:not|n't|never)$/
+      !< CC
+      !< CONJP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SBAR < (WHNP=target < WRB)]]></compile>
+      <pretty><![CDATA[Root SBAR
+   < WHNP=target
+      < WRB]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[SBARQ <, WHADVP=target]]></compile>
+      <pretty><![CDATA[Root SBARQ
+   <1 WHADVP=target]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[XS < /^JJ$/=target]]></compile>
+      <pretty><![CDATA[Root XS
+   < /^JJ$/=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>genetically modified food</text>
+      <coding>advmod(modified, genetically)</coding>
+    </example>
+    <example>
+      <text>less often</text>
+      <coding>advmod(often, less)</coding>
+    </example>
+  </relation>
+  <relation id="neg">
+    <name>NEGATION_MODIFIER</name>
+    <shortname>neg</shortname>
+    <longname>negation modifier</longname>
+    <parent>advmod</parent>
+    <description>The "negation modifier" grammatical relation. The negation modifier is the relation between a negation word and the word it modifies.</description>
+    <sourcepattern><![CDATA[VP|ADJP|S|SBAR|SINV|SQ|NP(?:-TMP|-ADV)?|FRAG]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^VP|NP(?:-TMP|-ADV)?|ADJP|SQ|S|FRAG$/< (RB=target < /^(?i:not|n't|never)$/)]]></compile>
+      <pretty><![CDATA[Root /^VP|NP(?:-TMP|-ADV)?|ADJP|SQ|S|FRAG$/
+   < RB=target
+      < /^(?i:not|n't|never)$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP|ADJP|S|SBAR|SINV|FRAG < (ADVP=target <# (RB < /^(?i:not|n't|never)$/))]]></compile>
+      <pretty><![CDATA[Root VP|ADJP|S|SBAR|SINV|FRAG
+   < ADVP=target
+      <# RB
+         < /^(?i:not|n't|never)$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP > SQ $-- (RB=target < /^(?i:not|n't|never)$/)]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      > SQ
+      $-- RB=target
+         < /^(?i:not|n't|never)$/]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Bill is not a scientist</text>
+      <coding>neg(scientist, not)</coding>
+    </example>
+    <example>
+      <text>Bill doesn't drive</text>
+      <coding>neg(drive, n't)</coding>
+    </example>
+  </relation>
+  <relation id="measure">
+    <name>MEASURE_PHRASE</name>
+    <shortname>measure</shortname>
+    <longname>measure-phrase</longname>
+    <parent>mod</parent>
+    <description>The "measure-phrase" grammatical relation. The measure-phrase is the relation between the head of an ADJP/ADVP and the head of a measure-phrase modifying the ADJP/ADVP.</description>
+    <sourcepattern><![CDATA[ADJP|ADVP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[ADJP <- JJ <, (NP=target !< NNP)]]></compile>
+      <pretty><![CDATA[Root ADJP
+   and
+      <-1 JJ
+      <1 NP=target
+         !< NNP]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[ADVP|ADJP <# (/^JJ|IN$/ $- NP=target)]]></compile>
+      <pretty><![CDATA[Root ADVP|ADJP
+   <# /^JJ|IN$/
+      $- NP=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>The director is 65 years old</text>
+      <coding>measure(old, years)</coding>
+    </example>
+  </relation>
+  <relation id="det">
+    <name>DETERMINER</name>
+    <shortname>det</shortname>
+    <longname>determiner</longname>
+    <parent>mod</parent>
+    <description>The "determiner" grammatical relation.</description>
+    <sourcepattern><![CDATA[^NP(?:-TMP|-ADV)?|WHNP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (DT=target !</both|either|neither/ !$- DT !$++ CC $++ /^N[NX]/)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < DT=target
+      and
+         !< /both|either|neither/
+         !$- DT
+         !$++ CC
+         $++ /^N[NX]/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (DT=target < /both|either|neither/ !$- DT !$++ CC $++ /^N[NX]/ !$++ (NP < CC))]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < DT=target
+      and
+         < /both|either|neither/
+         !$- DT
+         !$++ CC
+         $++ /^N[NX]/
+         !$++ NP
+            < CC]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (DT=target !< /both|neither|either/ $++ CC $++ /^N[NX]/)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < DT=target
+      and
+         !< /both|neither|either/
+         $++ CC
+         $++ /^N[NX]/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (DT=target $++ (/^JJ/ !$+ /^NN/) !$++CC)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < DT=target
+      and
+         $++ /^JJ/
+            !$+ /^NN/
+         !$++ CC]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (RB=target $++ (/PDT/ $+ /^NN/))]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < RB=target
+      $++ /PDT/
+         $+ /^NN/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[WHNP < (NP $-- (WHNP=target < WDT))]]></compile>
+      <pretty><![CDATA[Root WHNP
+   < NP
+      $-- WHNP=target
+         < WDT]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[WHNP < (/^NN/ $-- WDT|WP=target)]]></compile>
+      <pretty><![CDATA[Root WHNP
+   < /^NN/
+      $-- WDT|WP=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>The man is here</text>
+      <coding>det(man,the)</coding>
+    </example>
+    <example>
+      <text>Which man do you prefer?</text>
+      <coding>det(man,which)</coding>
+    </example>
+  </relation>
+  <relation id="predet">
+    <name>PREDETERMINER</name>
+    <shortname>predet</shortname>
+    <longname>predeterminer</longname>
+    <parent>mod</parent>
+    <description>The "predeterminer" grammatical relation.</description>
+    <sourcepattern><![CDATA[^NP(?:-TMP|-ADV)?]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (PDT|DT=target $+ /DT|PRP\$/ $++ /^N[NX]/ !$++ CC)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < PDT|DT=target
+      and
+         $+ /DT|PRP\$/
+         $++ /^N[NX]/
+         !$++ CC]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (PDT|DT=target $+ DT $++ (/^JJ/ !$+ /^NN/)) !$++ CC]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   and
+      < PDT|DT=target
+         and
+            $+ DT
+            $++ /^JJ/
+               !$+ /^NN/
+      !$++ CC]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < PDT=target <- DT]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   and
+      < PDT=target
+      <-1 DT]]></pretty>
+    </targetpattern>
+    <example>
+      <text>All the boys are here</text>
+      <coding>predet(boys,all)</coding>
+    </example>
+  </relation>
+  <relation id="preconj">
+    <name>PRECONJUNCT</name>
+    <shortname>preconj</shortname>
+    <longname>preconjunct</longname>
+    <parent>mod</parent>
+    <description>The "preconjunct" grammatical relation.</description>
+    <sourcepattern><![CDATA[S|VP|ADJP|PP|ADVP|UCP|NX|SBAR|^NP(?:-TMP|-ADV)?]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?|NX$/ < (PDT|CC=target < /both|neither|either/ $++ /^N[NX]/) $++ CC]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?|NX$/
+   and
+      < PDT|CC=target
+         and
+            < /both|neither|either/
+            $++ /^N[NX]/
+      $++ CC]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?|NX$/ < (PDT|CC=target < /both|either|neither/ $++ (/^JJ/ !$+ /^NN/)) $++ CC]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?|NX$/
+   and
+      < PDT|CC=target
+         and
+            < /both|either|neither/
+            $++ /^JJ/
+               !$+ /^NN/
+      $++ CC]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?|NX$/ < (PDT|CC|DT=target < /both|either|neither/ $++ CC)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?|NX$/
+   < PDT|CC|DT=target
+      and
+         < /both|either|neither/
+         $++ CC]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?|NX$/ < (PDT|CC|DT=target </both|either|neither/) < (NP < CC)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?|NX$/
+   and
+      < PDT|CC|DT=target
+         < /both|either|neither/
+      < NP
+         < CC]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S|VP|ADJP|PP|ADVP|UCP|NX|SBAR < (PDT|DT|CC=target < /both|either|neither/ $++ CC)]]></compile>
+      <pretty><![CDATA[Root S|VP|ADJP|PP|ADVP|UCP|NX|SBAR
+   < PDT|DT|CC=target
+      and
+         < /both|either|neither/
+         $++ CC]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Both the boys and the girls are here</text>
+      <coding>preconj(boys,both)</coding>
+    </example>
+  </relation>
+  <relation id="poss">
+    <name>POSSESSION_MODIFIER</name>
+    <shortname>poss</shortname>
+    <longname>possession modifier</longname>
+    <parent>mod</parent>
+    <description>The "possession" grammatical relation.</description>
+    <sourcepattern><![CDATA[^NP(?:-TMP|-ADV)?$]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (/^PRP\$/=target $++ /^NN/)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < /^PRP\$/=target
+      $++ /^NN/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (NP=target < POS)]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < NP=target
+      < POS]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ < (NNS=target $+ (POS < /'/))]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   < NNS=target
+      $+ POS
+         < /'/]]></pretty>
+    </targetpattern>
+    <example>
+      <text>their offices</text>
+      <coding>poss(offices, their)</coding>
+    </example>
+    <example>
+      <text>Bill 's clothes</text>
+      <coding>poss(clothes, Bill)</coding>
+    </example>
+  </relation>
+  <relation id="possessive">
+    <name>POSSESSIVE_MODIFIER</name>
+    <shortname>possessive</shortname>
+    <longname>possessive modifier</longname>
+    <parent>mod</parent>
+    <description>The "possessive" grammatical relation.</description>
+    <sourcepattern><![CDATA[^NP(?:-TMP|-ADV)?$]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?$/ <- POS=target]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?$/
+   <-1 POS=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>John's book</text>
+      <coding>possessive(John, 's)</coding>
+    </example>
+  </relation>
+  <relation id="prep">
+    <name>PREPOSITIONAL_MODIFIER</name>
+    <shortname>prep</shortname>
+    <longname>prepositional modifier</longname>
+    <parent>mod</parent>
+    <description>The "prepositional modifier" grammatical relation. A prepositional modifier of a verb, adjective, or noun is any prepositional phrase that serves to modify the meaning of the verb, adjective, or noun.</description>
+    <sourcepattern><![CDATA[NP(?:-TMP|-ADV)?|VP|S|SINV|ADJP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[/^NP(?:-TMP|-ADV)?|VP|ADJP$/ < /^PP(?:-TMP)?$/=target]]></compile>
+      <pretty><![CDATA[Root /^NP(?:-TMP|-ADV)?|VP|ADJP$/
+   < /^PP(?:-TMP)?$/=target]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S|SINV < (/^PP(?:-TMP)?$/=target !< SBAR) < VP]]></compile>
+      <pretty><![CDATA[Root S|SINV
+   and
+      < /^PP(?:-TMP)?$/=target
+         !< SBAR
+      < VP]]></pretty>
+    </targetpattern>
+    <example>
+      <text>I saw a cat in a hat</text>
+      <coding>prep(cat, in)</coding>
+    </example>
+    <example>
+      <text>I saw a cat with a telescope</text>
+      <coding>prep(saw, with)</coding>
+    </example>
+    <example>
+      <text>He is responsible for meals</text>
+      <coding>prep(responsible, for)</coding>
+    </example>
+  </relation>
+  <relation id="prt">
+    <name>PHRASAL_VERB_PARTICLE</name>
+    <shortname>prt</shortname>
+    <longname>phrasal verb particle</longname>
+    <parent>mod</parent>
+    <description>The "phrasal verb particle" grammatical relation. The "phrasal verb particle" relation identifies phrasal verb.</description>
+    <sourcepattern><![CDATA[VP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP < PRT=target]]></compile>
+      <pretty><![CDATA[Root VP
+   < PRT=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>They shut down the station.</text>
+      <coding>prt(shut, down)</coding>
+    </example>
+  </relation>
+  <relation id="parataxis">
+    <name>PARATAXIS</name>
+    <shortname>parataxis</shortname>
+    <longname>parataxis</longname>
+    <parent>dep</parent>
+    <description>The "parataxis" grammatical relation. Relation between the main verb of a sentence and other sentential elements, such as a sentential parenthetical, a sentence after a ":" or a ";" etc.</description>
+    <sourcepattern><![CDATA[S|VP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP < (PRN=target < /^S|SBAR$/)]]></compile>
+      <pretty><![CDATA[Root VP
+   < PRN=target
+      < /^S|SBAR$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[VP $ (PRN=target < /^S|SBAR$/)]]></compile>
+      <pretty><![CDATA[Root VP
+   $ PRN=target
+      < /^S|SBAR$/]]></pretty>
+    </targetpattern>
+    <targetpattern>
+      <compile><![CDATA[S|VP < (/^:$/ $+ /^S/=target)]]></compile>
+      <pretty><![CDATA[Root S|VP
+   < /^:$/
+      $+ /^S/=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>The guy, John said, left early in the morning.</text>
+      <coding>parataxis(left,said)</coding>
+    </example>
+  </relation>
+  <relation id="sdep">
+    <name>SEMANTIC_DEPENDENT</name>
+    <shortname>sdep</shortname>
+    <longname>semantic dependent</longname>
+    <parent>dep</parent>
+    <description>The "semantic dependent" grammatical relation has been introduced as a supertype for the controlling subject relation.</description>
+  </relation>
+  <relation id="xsubj">
+    <name>CONTROLLING_SUBJECT</name>
+    <shortname>xsubj</shortname>
+    <longname>controlling subject</longname>
+    <parent>sdep</parent>
+    <description>The "controlling subject" grammatical relation. A controlling subject is the relation between the head of an xcomp and the external subject of that clause.</description>
+    <sourcepattern><![CDATA[VP]]></sourcepattern>
+    <targetpattern>
+      <compile><![CDATA[VP < TO > (S !$- NP !< NP !>> (VP < (VB < be)) >+(VP) (VP $-- NP=target))]]></compile>
+      <pretty><![CDATA[Root VP
+   and
+      < TO
+      > S
+         and
+            !$- NP
+            !< NP
+            !>> VP
+               < VB
+                  < be
+            >+(VP) VP
+               $-- NP=target]]></pretty>
+    </targetpattern>
+    <example>
+      <text>Tom likes to eat fish</text>
+      <coding>xsubj(eat, Tom)</coding>
+    </example>
+  </relation>
+  <relation id="agent">
+    <name>AGENT</name>
+    <shortname>agent</shortname>
+    <longname>agent</longname>
+    <parent>dep</parent>
+    <description>The "agent" grammatical relation. The agent of a passive VP is the complement introduced by "by" and doing the action.</description>
+    <example>
+      <text>The man has been killed by the police</text>
+      <coding>agent(killed, police)</coding>
+    </example>
+  </relation>
+</model>

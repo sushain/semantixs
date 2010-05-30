@@ -1,0 +1,177 @@
+<!doctype html>
+<!-- The DOCTYPE declaration above will set the    -->
+<!-- browser's rendering engine into               -->
+<!-- "Standards Mode". Replacing this declaration  -->
+<!-- with a "Quirks Mode" doctype may lead to some -->
+<!-- differences in layout.                        -->
+
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <!--                                                               -->
+    <!-- Consider inlining CSS to reduce the number of requested files -->
+    <!--                                                               -->
+    <link type="text/css" rel="stylesheet" href="SEMTUSWEBAPP.css">
+
+    <!--                                           -->
+    <!-- Any title is fine                         -->
+    <!--                                           -->
+    <title>SEMANTIXS</title>
+    
+    <!--                                           -->
+    <!-- This script loads your compiled module.   -->
+    <!-- If you add any GWT meta tags, they must   -->
+    <!-- be added before this line.                -->
+    <!--                                           -->
+    <script type="text/javascript" language="javascript" src="semtuswebapp/semtuswebapp.nocache.js"></script>
+  </head>
+
+  <!--                                           -->
+  <!-- The body can have arbitrary html, or      -->
+  <!-- you can leave the body empty if you want  -->
+  <!-- to create a completely dynamic UI.        -->
+  <!--                                           -->
+  <body text="#ff9000" link="#00ff00" bgcolor="#000000" background="xxx.jpg" onload="">
+
+    <!-- OPTIONAL: include this if you want history support -->
+    <!--iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe-->
+    
+    <!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
+    <noscript>
+      <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+        Your web browser must have JavaScript enabled
+        in order for this application to display correctly.
+      </div>
+    </noscript>
+    
+<table height="100%" width="100%"> 
+
+<tr> 
+<td colspan="3" style="background: rgb(216, 196, 122) none repeat scroll 0% 50%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial" height=5px width="100%"> 
+</td>
+</tr> 
+
+<tr>
+<td colspan="3">
+<br/>
+<center>
+    <font color="#f0e190" face="georgia" size="6">SEMANTIXS</font> 
+    <br/><br/>
+     <font color="#f0e190" face="georgia" size="4"> A System for Ontology-guided Extraction and Semantic Representation of Structured Information from Unstructured Text</font>
+    </center>
+    </td>
+</tr> 
+
+<tr> 
+<td colspan="3" height="2%" width="100%"> 
+
+<p align="center">
+
+<font color="#e0c190" face="verdana" size="1"> 
+                    Powered by Jena Semantic Web Framework, Google Web Toolkit and Stanford Parser</font>              
+		    <br/><br/>
+		    <font color="#e0c190" face="verdana" size="1"> 
+                    <a href="http://www.sushain.com/semantixs/home" target="_blank">Click here to know all about SEMANTIXS</a></font>
+  </p>
+		    
+</td>
+</tr> 
+
+<br/>
+
+<tr> 
+<td colspan="3" style="background: rgb(216, 196, 122) none repeat scroll 0% 50%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial" height=5px width="100%"> 
+</td>
+</tr> 
+
+<tr>
+
+<td width="28%" height="100%"> 
+<table height="100%"> 
+<tbody>
+
+<tr>
+<td style="background:  none repeat scroll 0% 50%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial" height="1%">
+<font color="#e0c190" face="verdana" size="4"> 
+<center> Usage Tips </center></font>
+<hr/>
+<br/>
+
+<font color="#e0c190" face="verdana" size="1"> 
+* What is SEMANTIXS and what can it do for me ?
+<br/><br/>
+SEMANTIXS is a semantic information extraction system that can extract, represent and visualize domain-specific knowledge from free-text in the form of complex (and simple)
+relationships. It does this by applying rule-based extraction algorithms to free-text and identifying key entities and
+relations, referring to certain background knowledge that's given as input, validating the extracted constructs in light of this background knowlede 
+in order to achieve coherent results as per the given domain and finally, representing the results in the form of RDF graph(s), which can be analyzed using 
+an in-built visualizer.
+<br/><br/><hr/><br/>
+* Ok, so I've some text and I want to extract whatever information I can get. What to do ?
+<br/><br/>
+You can test SEMANTIXS on any text without uploading anything by setting Analysis Complexity to level 3
+before processing. With this setting, SEMANTIXS behaves opportunistically and simply tries to extract  
+as much information as it can, learning new relationships and concepts along the way.
+<br/><br/><hr/><br/>
+* Nice. I want to know more about what SEMANTIXS can do. What should I upload before trying to process text and what difference does it make ?
+<br/><br/>
+You can test SEMANTIXS on any text without uploading anything, by setting Analysis Complexity to level 3.
+However, in levels 1 and 2, SEMANTIXS expects a file in .rdf format as input, which
+defines the domain of the text. In most cases, this would mean that your .rdf file
+is expected to contain the domain ontology (TBOX: class concepts  + relationships) as well
+as instance assertions (A-BOX) that you expect in text. SEMANTIXS then works within your domain and doesn't try to extract any information thats not relevant to your description
+as defined in the uploaded .rdf file.
+<br/><br/><hr/><br/>
+* Well, I've a domain ontology, but I don't have instance data, or my ontology doesn't cover all the relationships that I would ideally want for my domain. What should I do ?
+<br/><br/>
+Try setting Analysis Complexity to level 2 or 3. With these settings, SEMANTIXS sacrifices some correctness for exploring wilderness in trying to enrich the given ontology by learning new relationships as it reads text.
+It also utilizes some pre-generated instance data (for eg., FOAF) in addition to the given ontology for acquiring knowledge, however in the current version, 
+it won't attempt to automatically map those instances to the input ontology; instead, it'll retain their original references and uri's.
+<br/><br/><hr/><br/>
+* Overall, it seems pretty cool. I want to know more about what's going on inside. Where can I learn all that ?
+<br/><br/>
+That's very appreciated. Please click on - "Click here to know all about SEMANTIXS" link at the page header to navigate through the underlying research &amp; thesis, algorithms &amp; rules in play, examples, etc.
+Alt., you can contact the <a href="http://sushain.com/profile" target="_blank">author</a> for any questions.
+</font>
+</td>
+</tr>
+
+</tbody>
+</table>
+</td> 
+
+<td style="background: rgb(216, 196, 122) none repeat scroll 0% 50%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; width: 0.5%"> 
+</td> 
+
+<td height="100%" width="75%">
+<div id="contentarea" style="position: absolute; top: 35%; left: 20%; width:80%; height:100%"> 
+    <table align="center">
+ 
+      <tr>
+        <td align="center" id="nameFieldContainer"></td>
+	</tr>
+	<br/>
+	<tr>
+        <td align="center" id="sendButtonContainer"></td>
+      </tr>
+      <tr>
+        <td colspan="2" style="color:red;" id="errorLabelContainer"></td>
+      </tr>
+      <tr>
+        <td align="center" id="demo"></td>
+      </tr>
+      
+    </table>
+    </div>
+    </td>   
+    
+    </tr>
+    </table>
+    
+    <div style="width:100%; height:5%"> 
+<p align="center"><font color="#e0c190" face="verdana" size="1"> 
+        Conceptualized, Designed and Developed by <a href="http://sushain.com/profile" target="_blank">Sushain Pandit</a>.<br/>
+        Copyright (C) Sushain Pandit, <a href="http://www.cs.iastate.edu/~honavar/aigroup.html" target="_blank">Artificial Intelligence Research Lab</a>, Iowa State University. All rights reserved. </font>
+    </div>
+  </body>
+</html>
