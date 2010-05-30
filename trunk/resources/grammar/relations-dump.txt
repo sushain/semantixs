@@ -1,0 +1,754 @@
+<model>
+<relation><name>GOVERNOR</name><shortname>gov</shortname><longname>governor</longname><parent>gov</parent><description>The "governor" grammatical relation, which is the inverse of "dependent"</description><example>the red car→gov(red, car)</example></relation>
+<relation><name>DEPENDENT</name><shortname>dep</shortname><longname>dependent</longname><parent>dep</parent><description>The "dependent" grammatical relation, which is the inverse of "governor"</description><example>the red car→dep(car, red)</example></relation>
+<relation><name>PREDICATE</name><shortname>pred</shortname><longname>predicate</longname><parent>pred | dep</parent><sourcepattern>S|SINV</sourcepattern><targetpattern>Root S
+   < VP=target</targetpattern><description>The "predicate" grammatical relation. The predicate of a clause is the main VP of that clause; the predicate of a subject is the predicate of the clause to which the subject belongs.</description><example>Reagan died→pred(Reagan, died)</example></relation>
+<relation><name>AUX_MODIFIER</name><shortname>aux</shortname><longname>auxiliary</longname><parent>aux | dep</parent><sourcepattern>VP|SQ|SINV</sourcepattern><targetpattern>Root VP
+   and
+      < VP
+      < /^(?:TO|MD|VB.*)$/=target</targetpattern><targetpattern>Root SQ|SINV
+   < /^VB|MD/=target
+      $++ /^(?:VP|ADJP)/</targetpattern><description>The "auxiliary" grammatical relation. An auxiliary of a clause is a non-main verb of the clause.</description><example>Reagan has died→aux(died, has)</example></relation>
+<relation><name>AUX_PASSIVE_MODIFIER</name><shortname>auxpass</shortname><longname>passive auxiliary</longname><parent>auxpass | aux | dep</parent><sourcepattern>VP|SQ</sourcepattern><targetpattern>Root VP
+   and
+      < /^(?:VB|AUXG?)/=target
+         < /be|was|'s|is|are|were|been|being|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/
+      < VP|ADJP
+         < VBN|VBD</targetpattern><targetpattern>Root VP
+   and
+      < /^(?:VB|AUXG?)/=target
+         < /be|was|'s|is|are|were|been|being|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/
+      < VP|ADJP
+         and
+            < VP|ADJP
+               < VBN|VBD
+            < CC</targetpattern><targetpattern>Root SQ
+   < /^(?:VB|AUX)/=target
+      and
+         < /^(?:was|is|are|were|am|Was|Is|Are|Were|Am|WAS|IS|ARE|WERE|AM)$/
+         $++ VP
+            < /^VB[DN]$/</targetpattern><description>The "passive auxiliary" grammatical relation. A passive auxiliary of a clause is a non-main verb of the clause which contains the passive information.</description><example>Kennedy has been killed→auxpass(killed, been)</example></relation>
+<relation><name>COPULA</name><shortname>cop</shortname><longname>copula</longname><parent>cop | aux | dep</parent><sourcepattern>VP|SQ</sourcepattern><targetpattern>Root VP
+   < /^VB/=target
+      and
+         < /(?i)^(?:am|'m|are|'re|is|'s|be|being|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/
+         or
+            $++ ADJP|NP
+               !< VBN
+            $++ S
+               <: ADJP
+                  < JJ</targetpattern><targetpattern>Root SQ
+   and
+      <1 /^VB/=target
+         < /(?i)^(am|are|is|was|were)$/
+      !$ /^WH*/</targetpattern><description>The "copula" grammatical relation. A copula is the relation between the complement of a copular verb and the copular verb.</description><example>Bill is big→cop(big, is)</example><example>Bill is an honest man→cop(man, is)</example></relation>
+<relation><name>CONJUNCT</name><shortname>conj</shortname><longname>conjunct</longname><parent>conj | dep</parent><sourcepattern>VP|NP|ADJP|PP|QP|ADVP|UCP|S|NX|SBAR</sourcepattern><targetpattern>Root VP|ADJP|PP|QP|NP|ADVP|UCP|S|NX|SBAR
+   and
+      < CC|CONJP
+         $+ !PRN=target
+      !<1 CC</targetpattern><targetpattern>Root VP|ADJP|PP|NP|ADVP|UCP|S|NX|SBAR
+   < CC|CONJP
+      $+ ADVP
+         $+ !PRN=target</targetpattern><targetpattern>Root VP|ADJP|PP|NP|ADVP|UCP|S|NX|SBAR
+   and
+      < CC|CONJP
+      < /^,$/
+         $+ /^S$|^(A|N|V|PP|PRP|J|W|R)/=target</targetpattern><targetpattern>Root VP|ADJP|PP|NP|ADVP|UCP|S|NX|SBAR
+   and
+      < CC|CONJP
+      < PRN
+         $+ /^(A|N|V|PP|PRP|J|W|R|S)/=target</targetpattern><targetpattern>Root NX
+   and
+      < CC|CONJP
+      < /^,$/
+         $- /^(A|N|V|PP|PRP|J|W|R|S)/=target</targetpattern><targetpattern>Root VP|ADJP|PP|QP|NP|ADVP|UCP|S|NX|SBAR
+   < CC
+      $++ CC
+         $+ !PRN=target</targetpattern><description>The "conjunct" grammatical relation. A conjunct is the relation between two elements connected by a conjunction word. We treat conjunctions asymmetrically: The head of the relation is the first conjunct and other conjunctions depend on it via the conj relation.</description><example>Bill is big and honest→conj(big, honest)</example></relation>
+<relation><name>COORDINATION</name><shortname>cc</shortname><longname>coordination</longname><parent>cc | dep</parent><sourcepattern>S|VP|NP|ADJP|PP|QP|ADVP|UCP|NX|SBAR</sourcepattern><targetpattern>Root S|VP|NP|QP|ADJP|PP|ADVP|UCP|NX|SBAR
+   < CC|CONJP=target
+      !< /either|neither|both|Either|Neither|Both/</targetpattern><description>The "coordination" grammatical relation. A coordination is the relation between an element and a conjunction.</description><example>Bill is big and honest.→cc(big, and)</example></relation>
+<relation><name>PUNCTUATION</name><shortname>punct</shortname><longname>punctuation</longname><parent>punct | dep</parent><sourcepattern>S|NP|VP|SQ|PRN|SINV|SBAR|UCP</sourcepattern><targetpattern>Root __
+   < /^(?:\.|:|,|''|``|-LRB-|-RRB-)$/=target</targetpattern><description>The "punctuation" grammatical relation. This is used for any piece of punctuation in a clause, if punctuation is being retained in the typed dependencies.</description><example>Go home!→punct(Go, !)</example></relation>
+<relation><name>ARGUMENT</name><shortname>arg</shortname><longname>argument</longname><parent>arg | dep</parent><description>The "argument" grammatical relation. An argument of a VP is a subject or complement of that VP; an argument of a clause is an argument of the VP which is the predicate of that clause.</description><example>Clinton defeated Dole→arg(defeated, Clinton), arg(defeated, Dole)</example></relation>
+<relation><name>SUBJECT</name><shortname>subj</shortname><longname>subject</longname><parent>subj | arg | dep</parent><description>The "subject" grammatical relation. The subject of a VP is the noun or clause that performs or experiences the VP; the subject of a clause is the subject of the VP which is the predicate of that clause.</description><example>Clinton defeated Dole→subj(defeated, Clinton)</example><example>What she said is untrue→subj(is, What she said)</example></relation>
+<relation><name>NOMINAL_SUBJECT</name><shortname>nsubj</shortname><longname>nominal subject</longname><parent>nsubj | subj | arg | dep</parent><sourcepattern>S|SQ|SBARQ|SINV|SBAR</sourcepattern><targetpattern>Root S
+   < NP|WHNP=target
+      and
+         and
+            !< EX
+            !< /^NN/
+               < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/
+         $++ VP</targetpattern><targetpattern>Root S
+   < NP=target
+      and
+         < /^NN/
+            < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/
+         !$++ NP
+         $++ VP</targetpattern><targetpattern>Root SQ
+   < NP=target
+      and
+         !< EX
+         $++ VP</targetpattern><targetpattern>Root SQ
+   < NP=target
+      and
+         !< EX
+         and
+            $- /^VB/
+            !$++ VP</targetpattern><targetpattern>Root SQ
+   < NP=target
+      and
+         !< EX
+         and
+            $- RB
+               $- /^VB/
+            !$++ VP</targetpattern><targetpattern>Root SBARQ
+   and
+      < WHNP=target
+      < SQ
+         < VP
+            !$-- NP</targetpattern><targetpattern>Root SBARQ
+   < SQ=target
+      and
+         < /^VB/
+         !< VP</targetpattern><targetpattern>Root SINV
+   < VP|VBZ|VBD
+      $+ /^NP|WHNP$/=target</targetpattern><targetpattern>Root S
+   and
+      < NP=target
+         $+ NP|ADJP
+      > VP</targetpattern><targetpattern>Root SBAR
+   and
+      <1 WHNP=target
+      < S
+         and
+            < VP
+               !$-- NP
+            !< SBAR</targetpattern><targetpattern>Root SBAR
+   and
+      !< WHNP
+      < S
+         !< NP
+            $++ VP
+      > VP
+         > S
+            $- WHNP=target</targetpattern><targetpattern>Root SQ
+   < NP
+      and
+         < EX
+         $++ NP=target</targetpattern><targetpattern>Root S
+   and
+      < NP
+         < EX
+      < VP
+         < NP=target</targetpattern><description>The "nominal subject" grammatical relation. A nominal subject is a subject which is an noun phrase.</description><example>Clinton defeated Dole→nsubj(defeated, Clinton)</example></relation>
+<relation><name>NOMINAL_PASSIVE_SUBJECT</name><shortname>nsubjpass</shortname><longname>nominal passive subject</longname><parent>nsubjpass | nsubj | subj | arg | dep</parent><sourcepattern>S|VP</sourcepattern><targetpattern>Root S
+   and
+      < /^NP|WHNP$/=target
+      < VP|SQ
+         and
+            < VP
+               < VBN|VBD
+            < /^(VB|AUX)/
+               < /be|was|is|are|were|been|being|'s|'re|'m|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/</targetpattern><targetpattern>Root S
+   and
+      < /^(NP|WHNP)$/=target
+      < VP|SQ
+         <+(VP) VP
+            and
+               < VBN|VBD
+               > VP
+                  < /^(VB|AUX)/
+                     < /be|was|is|are|were|been|being|'s|'re|'m|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/</targetpattern><description>The "nominal passive subject" grammatical relation. A nominal passive subject is a subject of a passive which is an noun phrase.</description><example>Dole was defeated by Clinton→nsubjpass(defeated, Dole)</example></relation>
+<relation><name>CLAUSAL_SUBJECT</name><shortname>csubj</shortname><longname>clausal subject</longname><parent>csubj | subj | arg | dep</parent><sourcepattern>S</sourcepattern><targetpattern>Root S
+   < SBAR|S=target
+      and
+         !$+ /^,$/
+         $++ VP
+            !$-- NP</targetpattern><description>The "clausal subject" grammatical relation. A clausal subject is a subject which is a clause.</description><example>What she said makes sense→csubj(makes, said)</example><example>What she said is untrue→csubj(untrue, said)</example></relation>
+<relation><name>CLAUSAL_PASSIVE_SUBJECT</name><shortname>csubjpass</shortname><longname>clausal subject</longname><parent>csubjpass | csubj | subj | arg | dep</parent><sourcepattern>S</sourcepattern><targetpattern>Root S
+   < SBAR|S=target
+      and
+         !$+ /^,$/
+         $++ VP
+            and
+               < VP
+                  < VBN|VBD
+               < /^(VB|AUX)/
+                  < /be|was|is|are|were|been|being|'s|'re|'m|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/
+               !$-- NP</targetpattern><targetpattern>Root S
+   < SBAR|S=target
+      and
+         !$+ /^,$/
+         $++ VP
+            and
+               <+(VP) VP
+                  and
+                     < VBN|VBD
+                     > VP
+                        < /^(VB|AUX)/
+                           < /be|was|is|are|were|been|being|'s|'re|'m|am|Been|Being|WAS|IS|get|got|getting|gets|Get|gotten|becomes|become|became|felt|feels|feel|seems|seem|seemed|remains|remained|remain/
+               !$-- NP</targetpattern><description>The "clausal passive subject" grammatical relation. A clausal passive subject is a subject of a passive verb which is a clause.</description><example>That she lied was suspected by everyone→csubjpass(suspected, lied)</example></relation>
+<relation><name>COMPLEMENT</name><shortname>comp</shortname><longname>complement</longname><parent>comp | arg | dep</parent><description>The "complement" grammatical relation. A complement of a VP is any object (direct or indirect) of that VP, or a clause or adjectival phrase which functions like an object; a complement of a clause is an complement of the VP which is the predicate of that clause.</description><example>She gave me a raise→comp(gave, me), comp(gave, a raise)</example><example>I like to swim→comp(like, to swim)</example></relation>
+<relation><name>OBJECT</name><shortname>obj</shortname><longname>object</longname><parent>obj | comp | arg | dep</parent><description>The "object" grammatical relation. An object of a VP is any direct object or indirect object of that VP; an object of a clause is an object of the VP which is the predicate of that clause.</description><example>She gave me a raise→obj(gave, me), obj(gave, raise)</example></relation>
+<relation><name>DIRECT_OBJECT</name><shortname>dobj</shortname><longname>direct object</longname><parent>dobj | obj | comp | arg | dep</parent><sourcepattern>SBARQ|VP|SBAR</sourcepattern><targetpattern>Root VP
+   and
+      < NP
+         $+ /^(NP|WHNP)$/=target
+            !< /^NN/
+               < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter|lot$/
+      !< /^VB/
+         < /^(am|is|are|being|Being|be|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/</targetpattern><targetpattern>Root VP
+   and
+      < NP
+         < NP
+            $+ /^(NP|WHNP)$/=target
+               !< /^NN/
+                  < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter|lot$/
+      !< /^VB/
+         < /^(am|is|are|be|being|Being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/</targetpattern><targetpattern>Root VP
+   and
+      !< /^VB/
+         < /^(am|is|are|be|being|Being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/
+      < /^(NP|WHNP)$/=target
+         and
+            !< /^NN/
+               < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/
+            !$+ NP</targetpattern><targetpattern>Root VP
+   and
+      !< /^VB/
+         < /^(am|is|are|be|being|Being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/
+      < /^(NP|WHNP)$/=target
+         $+ NP-TMP</targetpattern><targetpattern>Root VP
+   and
+      !< /^VB/
+         < /^(am|is|are|be|being|Being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/
+      < /^(NP|WHNP)$/=target
+         $+ NP
+            < /^NN/
+               < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/</targetpattern><targetpattern>Root SBARQ
+   and
+      <1 WHNP=target
+         !< WRB
+      << VP
+         and
+            !< S
+               < VP
+                  < TO
+            $-- NP</targetpattern><targetpattern>Root SBAR
+   and
+      <1 WHNP=target
+         !< WRB
+      < S
+         and
+            < NP
+            < VP
+               and
+                  !< SBAR
+                  !< S
+                     < VP
+                        < TO</targetpattern><targetpattern>Root SBAR
+   and
+      !< WHNP
+      < S
+         < NP
+            $++ VP
+               !$++ NP
+      > VP
+         > S
+            and
+               < NP
+               $- WHNP=target</targetpattern><description>The "direct object" grammatical relation. The direct object of a VP is the noun phrase which is the (accusative) object of the verb; the direct object of a clause is the direct object of the VP which is the predicate of that clause.</description><example>She gave me a raise→dobj(gave, raise)</example></relation>
+<relation><name>INDIRECT_OBJECT</name><shortname>iobj</shortname><longname>indirect object</longname><parent>iobj | obj | comp | arg | dep</parent><sourcepattern>VP</sourcepattern><targetpattern>Root VP
+   < NP=target
+      and
+         !< /\$/
+         !< /^NN/
+            < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/
+         $+ NP
+            !< /^NN/
+               < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/</targetpattern><targetpattern>Root VP
+   < NP=target
+      < NP
+         and
+            !< /\$/
+            $++ NP
+               !< /^NN/
+                  < /^lot$/
+            !$ CC
+            !$ CONJP
+            !$ /^,$/
+            !$++ /^:$/</targetpattern><description>The "indirect object" grammatical relation. The indirect object of a VP is the noun phrase which is the (dative) object of the verb; the indirect object of a clause is the indirect object of the VP which is the predicate of that clause.</description><example>She gave me a raise→iobj(gave, me)</example></relation>
+<relation><name>PREPOSITIONAL_OBJECT</name><shortname>pobj</shortname><longname>prepositional object</longname><parent>pobj | obj | comp | arg | dep</parent><sourcepattern>^PP(?:-TMP)?$</sourcepattern><targetpattern>Root /^PP(?:-TMP)?$/
+   and
+      < /^IN|VBG|TO|FW/
+      < /^NP(?:-TMP)?$/=target</targetpattern><targetpattern>Root /^PP(?:-TMP)?$/
+   < /^IN|VBG|TO/
+      $+ ADVP=target
+         < ADVP
+            < /^NP(?:-TMP)?$/</targetpattern><description>The "prepositional object" grammatical relation. The object of a preposition is the head of a noun phrase following the preposition. (The preposition in turn may be modifying a noun, verb, etc.) We here define cases of VBG quasi-prepositions like "including", "concerning", etc. as instances of pobj.</description><example>I sat on the chair→pobj(on, chair) <p/> (The preposition can be called a FW for pace, versus, etc.  It can also be called a CC - but we don't currently handle that and would need to distinguish from conjoined PPs.)</example></relation>
+<relation><name>PREPOSITIONAL_COMPLEMENT</name><shortname>pcomp</shortname><longname>prepositional complement</longname><parent>pcomp | obj | comp | arg | dep</parent><sourcepattern>^PP(?:-TMP)?$</sourcepattern><targetpattern>Root /^PP(?:-TMP)?$/
+   < IN|VBG
+      $+ SBAR|S=target</targetpattern><description>The "prepositional complement" grammatical relation. The prepositional complement of a preposition is the head of a sentence following the preposition.</description><example>We have no useful information on whether users are at risk→pcomp(on, are)</example><example>They heard about you missing classes.→pcomp(about, missing)</example></relation>
+<relation><name>ATTRIBUTIVE</name><shortname>attr</shortname><longname>attributive</longname><parent>attr | comp | arg | dep</parent><sourcepattern>VP|SBARQ|SQ</sourcepattern><targetpattern>Root VP
+   and
+      !$ NP
+         < EX
+      < NP=target
+      < /^VB/
+         < /^(am|is|are|be|being|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/</targetpattern><targetpattern>Root SBARQ
+   < WHNP=target
+      $+ SQ
+         < /^VB/
+            and
+               < /^(am|is|are|'s|'re|'m|was|were|seem|seems|seemed|appear|appears|appeared|stay|stays|stayed|remain|remains|remained|resemble|resembles|resembled|become|becomes|became)$/
+               !$++ VP
+                  < VBG</targetpattern><targetpattern>Root SQ
+   and
+      <1 /^VB/
+         < /^(Am|am|Is|is|Are|are|be|being|'s|'re|'m|Was|was|Were|were)$/
+      < NP=target
+         $-- NP
+            !< EX</targetpattern><description>The "attributive" grammatical relation. The attributive is the complement of a verb such as "to be, to seem, to appear".</description></relation>
+<relation><name>CLAUSAL_COMPLEMENT</name><shortname>ccomp</shortname><longname>clausal complement</longname><parent>ccomp | comp | arg | dep</parent><sourcepattern>VP|SINV|S|ADJP</sourcepattern><targetpattern>Root VP
+   < S=target
+      and
+         < VP
+            !<1 TO|VBG
+         !$-- NP</targetpattern><targetpattern>Root VP
+   < SBAR=target
+      and
+         < S
+            <+(S) VP
+         <1 IN|DT
+            < /^(that|whether)$/</targetpattern><targetpattern>Root VP
+   < SBAR=target
+      and
+         < S
+            < VP
+         !$-- NP
+         !<1 IN</targetpattern><targetpattern>Root S|SINV
+   < S|SBARQ=target
+      and
+         $+ /^(,|.|'')$/
+         !$- /^:|CC$/
+         !< VP
+            < TO|VBG</targetpattern><targetpattern>Root ADJP
+   < SBAR=target
+      < S
+         < VP</targetpattern><targetpattern>Root S
+   <1 SBAR=target
+      and
+         <1 IN
+            < /^([Tt]hat|[Ww]hether)$/
+         !$+ VP</targetpattern><description>The "clausal complement" grammatical relation. A clausal complement of a VP or an ADJP is a clause with internal subject which functions like an object of the verb or of the adjective; a clausal complement of a clause is the clausal complement of the VP or of the ADJP which is the predicate of that clause. Such clausal complements are usually finite (though there are occasional remnant English subjunctives).</description><example>He says that you like to swim→ccomp(says, like)</example><example>I am certain that he did it→ccomp(certain, did)</example></relation>
+<relation><name>XCLAUSAL_COMPLEMENT</name><shortname>xcomp</shortname><longname>xclausal complement</longname><parent>xcomp | comp | arg | dep</parent><sourcepattern>VP|ADJP</sourcepattern><targetpattern>Root VP
+   and
+      !> VP
+         < VB
+            < be
+      < S=target
+         and
+            !$- NN
+               < /^order$/
+            < VP
+               < TO</targetpattern><targetpattern>Root ADJP
+   < S=target
+      <1 VP
+         <1 TO</targetpattern><targetpattern>Root VP
+   < S=target
+      and
+         !$- NN
+            < /^order$/
+         < NP
+            $+ NP|ADJP</targetpattern><targetpattern>Root VP
+   < /^VB/
+      $+ VP=target
+         and
+            < VB
+            < NP</targetpattern><targetpattern>Root VP
+   and
+      !> VP
+         < VB
+            < be
+      < SBAR=target
+         < S
+            and
+               !$- NN
+                  < /^order$/
+               < VP
+                  < TO</targetpattern><targetpattern>Root VP
+   and
+      > VP
+      < S=target
+         and
+            !$- NN
+               < /^order$/
+            <: NP</targetpattern><targetpattern>Root VP
+   < S=target
+      and
+         !< NP
+         < VP
+            < VBG</targetpattern><description>An open clausal complement (xcomp) of a VP or an ADJP is a clausal complement without its own subject, whose reference is determined by an external subject. These complements are always non-finite. The name xcomp is borrowed from Lexical-Functional Grammar. (Only "TO-clause" are recognized.)</description><example>I like to swim→xcomp(like, swim)</example><example>I am ready to leave→xcomp(ready, leave)</example></relation>
+<relation><name>COMPLEMENTIZER</name><shortname>complm</shortname><longname>complementizer</longname><parent>complm | comp | arg | dep</parent><sourcepattern>SBAR</sourcepattern><targetpattern>Root SBAR
+   and
+      <1 IN|DT=target
+         < /^(that|whether)$/
+      $-- /^VB/</targetpattern><targetpattern>Root SBAR
+   and
+      <1 IN|DT=target
+         < /^(that|whether)$/
+      $- NP</targetpattern><targetpattern>Root SBAR
+   and
+      <1 IN|DT=target
+         < /^(that|whether)$/
+      > ADJP|PP</targetpattern><targetpattern>Root SBAR
+   <1 IN|DT=target
+      < /^(That|Whether)$/</targetpattern><description>The "complementizer" grammatical relation. A complementizer of a clausal complement is the word introducing it.</description><example>He says that you like to swim→complm(like, that)</example></relation>
+<relation><name>MARKER</name><shortname>mark</shortname><longname>marker</longname><parent>mark | comp | arg | dep</parent><sourcepattern>^SBAR(?:-TMP)?$</sourcepattern><targetpattern>Root /^SBAR(?:-TMP)?$/
+   and
+      <1 IN=target
+         !< /^([Tt]hat|[Ww]hether)$/
+      < S|FRAG</targetpattern><description>The "marker" grammatical relation. A marker of an adverbial clausal complement is the word introducing it.</description><example>U.S. forces have been engaged in intense fighting after insurgents launched simultaneous attacks→mark(launched, after)</example></relation>
+<relation><name>RELATIVE</name><shortname>rel</shortname><longname>relative</longname><parent>rel | comp | arg | dep</parent><sourcepattern>SBAR</sourcepattern><targetpattern>Root SBAR
+   and
+      <1 /^WH/=target
+      > NP</targetpattern><description>The "relative" grammatical relation. A relative of a relative clause is the head word of the WH-phrase introducing it.</description><example>I saw the man that you love→rel(love, that)</example><example>I saw the man whose wife you love→rel(love, wife)</example></relation>
+<relation><name>REFERENT</name><shortname>ref</shortname><longname>referent</longname><parent>ref | dep</parent><sourcepattern>NP</sourcepattern><targetpattern>Root NP
+   and
+      $+ SBAR
+         < WHNP=target
+            !< /^WP\$/
+      > NP</targetpattern><targetpattern>Root NP
+   and
+      $+ SBAR
+         < WHPP
+            < WHNP=target
+               !< /^WP\$/
+      > NP</targetpattern><targetpattern>Root NP
+   $+ /^(,|PP|PRN)$/
+      $+ SBAR
+         < WHNP=target
+            !< /^WP\$/</targetpattern><targetpattern>Root NP
+   and
+      $+ /^(,|PP|PRN)$/
+         $+ SBAR
+            < WHPP
+               < WHNP=target
+                  !< /^WP\$/
+      > NP</targetpattern><description>The "referent" grammatical relation. A referent of the head of a NP is the relative word introducing the relative clause modifying the NP.</description><example>I saw the book which you bought→ref(book, which)</example></relation>
+<relation><name>EXPLETIVE</name><shortname>expl</shortname><longname>expletive</longname><parent>expl | dep</parent><sourcepattern>S|SQ</sourcepattern><targetpattern>Root S|SQ
+   < NP=target
+      < EX</targetpattern><description>The "expletive" grammatical relation. This relation captures an existential there.</description><example>There is a statue in the corner→expl(is, there)</example></relation>
+<relation><name>ADJECTIVAL_COMPLEMENT</name><shortname>acomp</shortname><longname>adjectival complement</longname><parent>acomp | comp | arg | dep</parent><sourcepattern>VP</sourcepattern><targetpattern>Root VP
+   < ADJP=target
+      !$-- NP</targetpattern><description>The "adjectival complement" grammatical relation. An adjectival complement of a VP is an adjectival phrase which functions as the complement (like an object of the verb); an adjectival complement of a clause is the adjectival complement of the VP which is the predicate of that clause.</description><example>She looks very beautiful→acomp(looks, beautiful)</example></relation>
+<relation><name>MODIFIER</name><shortname>mod</shortname><longname>modifier</longname><parent>mod | dep</parent><description>The "modifier" grammatical relation. A modifier of a VP is any constituent that serves to modify the meaning of the VP (but is not an <code>ARGUMENT</code> of that VP); a modifier of a clause is an modifier of the VP which is the predicate of that clause.</description><example>Last night, I swam in the pool→mod(swam, in the pool), mod(swam, last night)</example></relation>
+<relation><name>ADV_CLAUSE_MODIFIER</name><shortname>advcl</shortname><longname>adverbial clause modifier</longname><parent>advcl | mod | dep</parent><sourcepattern>VP|S|SQ</sourcepattern><targetpattern>Root VP
+   < /^SBAR(?:-TMP)?$/=target
+      <1 IN
+         and
+            !< /^([Tt]hat|[Ww]hether)$/
+            !$+ NN
+               < /^order$/</targetpattern><targetpattern>Root S|SQ
+   <1 /^SBAR(?:-TMP)?$/=target
+      and
+         <1 IN
+            and
+               !< /^([Tt]hat|[Ww]hether)$/
+               !$+ NN
+                  < /^order$/
+         !$+ VP</targetpattern><targetpattern>Root S|SQ
+   <1 /^SBAR(?:-TMP)?$/=target
+      <2 IN
+         and
+            !< /^([Tt]hat|[Ww]hether)$/
+            !$+ NN
+               < /^order$/</targetpattern><targetpattern>Root VP
+   < /^SBAR(?:-TMP)?$/=target
+      <1 WHADVP|WHNP
+         < WRB</targetpattern><targetpattern>Root S|SQ
+   <1 /^SBAR(?:-TMP)$/=target
+      <1 WHADVP|WHNP
+         < WRB</targetpattern><targetpattern>Root S|SQ
+   <1 PP=target
+      <1 RB</targetpattern><description>The "adverbial clause modifier" grammatical relation. An adverbial clause modifier of a VP is a clause modifying the verb (temporal clauses, consequences, conditional clauses, etc.).</description><example>The accident happened as the night was falling→advcl(happened, falling)</example><example>If you know who did it, you should tell the teacher→advcl(tell, know)</example></relation>
+<relation><name>PURPOSE_CLAUSE_MODIFIER</name><shortname>purpcl</shortname><longname>purpose clause modifier</longname><parent>purpcl | mod | dep</parent><sourcepattern>VP</sourcepattern><targetpattern>Root VP
+   < /^SBAR/=target
+      and
+         < IN
+            < in
+         < NN
+            < order
+         < S
+            < VP
+               < TO</targetpattern><targetpattern>Root VP
+   and
+      > VP
+         < VB
+            < be
+      < S=target
+         and
+            !$- /^,$/
+            < VP
+               < TO|VBG
+            !$-- NP</targetpattern><description>The "purpose clause modifier" grammatical relation. A purpose clause modifier of a VP is a clause headed by "(in order) to" specifying a purpose. Note: at present we only recognize ones that have "in order to" as otherwise we can't give our surface representations distinguish these from xcomp's. We can also recognize "to" clauses introduced by "be VBN".</description><example>He talked to the president in order to secure the account→purpcl(talked, secure)</example></relation>
+<relation><name>TEMPORAL_MODIFIER</name><shortname>tmod</shortname><longname>temporal modifier</longname><parent>tmod | mod | dep</parent><sourcepattern>VP|S|ADJP</sourcepattern><targetpattern>Root VP|ADJP
+   < /^NP-TMP$/=target</targetpattern><targetpattern>Root VP
+   < NP=target
+      < /^NN/
+         < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/</targetpattern><targetpattern>Root S
+   < /^NP-TMP$/=target
+      $++ NP
+         $++ VP</targetpattern><targetpattern>Root S
+   < NP=target
+      and
+         < /^NN/
+            < /^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|years?|months?|weeks?|days?|mornings?|evenings?|January|February|March|April|May|June|July|August|September|October|November|December|[Tt]oday|[Yy]esterday|[Tt]omorrow|[Ss]pring|[Ss]ummer|[Ff]all|[Aa]utumn|[Ww]inter$/
+         $++ NP
+            $++ VP</targetpattern><description>The "temporal modifier" grammatical relation. A temporal modifier of a VP or an ADJP is any constituent that serves to modify the meaning of the VP or the ADJP by specifying a time; a temporal modifier of a clause is an temporal modifier of the VP which is the predicate of that clause.</description><example>Last night, I swam in the pool→tmod(swam, night)</example></relation>
+<relation><name>RELATIVE_CLAUSE_MODIFIER</name><shortname>rcmod</shortname><longname>relative clause modifier</longname><parent>rcmod | mod | dep</parent><sourcepattern>NP</sourcepattern><targetpattern>Root NP
+   and
+      $++ SBAR=target
+         <+(SBAR) WHPP|WHNP
+      > NP</targetpattern><targetpattern>Root NP
+   and
+      $++ SBAR=target
+         <: S
+            !<1 VP
+               <1 TO
+      > NP</targetpattern><targetpattern>Root NP
+   and
+      $++ SBAR=target
+         < WHADVP
+            < WRB
+               < /^(where|why)/
+      > NP</targetpattern><targetpattern>Root NP
+   $++ RRC=target</targetpattern><description>The "relative clause modifier" grammatical relation. A relative clause modifier of an NP is a relative clause modifying the NP. The link points from the head noun of the NP to the head of the relative clause, normally a verb.</description><example>I saw the man you love→rcmod(man, love)</example><example>I saw the book which you bought→rcmod(book, bought)</example></relation>
+<relation><name>ADJECTIVAL_MODIFIER</name><shortname>amod</shortname><longname>adjectival modifier</longname><parent>amod | mod | dep</parent><sourcepattern>^NP(?:-TMP|-ADV)?|NX|WHNP$</sourcepattern><targetpattern>Root /^NP(?:-TMP|-ADV)?|NX|WHNP$/
+   < ADJP|WHADJP|JJ|JJR|JJS|VBN|VBG|VBD=target
+      and
+         !< QP
+         !$- CC</targetpattern><description>The "adjectival modifier" grammatical relation. An adjectival modifier of an NP is any adjectival phrase that serves to modify the meaning of the NP.</description><example>Sam eats red meat→amod(meat, red)</example></relation>
+<relation><name>NUMERIC_MODIFIER</name><shortname>num</shortname><longname>numeric modifier</longname><parent>num | mod | dep</parent><sourcepattern>NP(?:-TMP|-ADV)?</sourcepattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < CD|QP=target
+      !$- CC</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < ADJP=target
+      <: QP</targetpattern><description>The "numeric modifier" grammatical relation. A numeric modifier of an NP is any number phrase that serves to modify the meaning of the NP.</description><example>Sam eats 3 sheep→num(sheep, 3)</example></relation>
+<relation><name>NUMBER_MODIFIER</name><shortname>number</shortname><longname>compound number modifier</longname><parent>number | mod | dep</parent><sourcepattern>QP</sourcepattern><targetpattern>Root QP
+   < CD=target
+      !$- CC</targetpattern><description>The "compound number modifier" grammatical relation. A compound number modifier is a part of a number phrase or currency amount.</description><example>I lost $ 3.2 billion→number($, billion)</example></relation>
+<relation><name>QUANTIFIER_MODIFIER</name><shortname>quantmod</shortname><longname>quantifier modifier</longname><parent>quantmod | mod | dep</parent><sourcepattern>QP</sourcepattern><targetpattern>Root QP
+   < /^IN|RB|DT|JJ|XS$/=target</targetpattern><description>The "quantifier phrase modifier" grammatical relation. A quantifier modifier is an element modifying the head of a QP constituent.</description><example>About 200 people came to the party→quantmod(200, About)</example></relation>
+<relation><name>NOUN_COMPOUND_MODIFIER</name><shortname>nn</shortname><longname>nn modifier</longname><parent>nn | mod | dep</parent><sourcepattern>^NP(?:-TMP|-ADV)?$</sourcepattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < NP|NN|NNS|NNP|NNPS|FW=target
+      and
+         $++ NN|NNS|NNP|NNPS|FW|CD
+         !<-1 POS
+         !$- /^,$/</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   and
+      < NP|NN|NNS|NNP|NNPS|FW=target
+         and
+            !<-1 POS
+            $+ JJ|JJR|JJS
+      <# NN|NNS|NNP|NNPS
+      !<-1 POS</targetpattern><description>The "noun compound modifier" grammatical relation. A noun compound modifier of an NP is any noun that serves to modify the head noun. Note that this has all nouns modify the rightmost a la Penn headship rules. There is no intelligent noun compound analysis.</description><example>Oil price futures→nn(futures, oil), nn(futures, price)</example></relation>
+<relation><name>APPOSITIONAL_MODIFIER</name><shortname>appos</shortname><longname>appositional modifier</longname><parent>appos | mod | dep</parent><sourcepattern>^NP(?:-TMP|-ADV)?$</sourcepattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < NP=target
+      and
+         $- /^,$/
+         $-- NP
+         !$ CC|CONJP</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < PRN=target
+      < NP
+         and
+            < /^NNS?|CD$/
+            $-- /^-LRB-$/
+            $+ /^-RRB-$/</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   and
+      < NNP
+         $+ /^,$/
+            $+ NNP=target
+      !< CC|CONJP</targetpattern><description>The "appositional modifier" grammatical relation. An appositional modifier of an NP is an NP that serves to modify the meaning of the NP. It includes parenthesized examples</description><example>Sam, my brother, eats red meat→appos(Sam, brother)</example><example>Bill (John's cousin)→appos(Bill, cousin)</example></relation>
+<relation><name>ABBREVIATION_MODIFIER</name><shortname>abbrev</shortname><longname>abbreviation modifier</longname><parent>abbrev | appos | mod | dep</parent><sourcepattern>^NP(?:-TMP|-ADV)?$</sourcepattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < PRN=target
+      < NP
+         and
+            < NNP
+            $- /^-LRB-$/
+            $+ /^-RRB-$/</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < PRN=target
+      < NNP
+         and
+            $- /^-LRB-$/
+            $+ /^-RRB-$/</targetpattern><description>The "abbreviation modifier" grammatical relation. An abbreviation modifier of an NP is a parenthesized NP that serves to abbreviate the NP (or to define an abbreviation).</description><example>The Australian Broadcasting Corporation (ABC)→abbrev(Corporation, ABC)</example></relation>
+<relation><name>PARTICIPIAL_MODIFIER</name><shortname>partmod</shortname><longname>participial modifier</longname><parent>partmod | mod | dep</parent><sourcepattern>^NP(?:-TMP|-ADV)?|VP|S$</sourcepattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < VP=target
+      and
+         < VBG|VBN
+         $-- NP</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < /^,$/
+      $+ VP=target
+         <1 VBG|VBN</targetpattern><targetpattern>Root S
+   <1 NP
+      $+ /^,$/
+         $+ S=target
+            < VP
+               <1 VBG|VBN</targetpattern><description>The "participial modifier" grammatical relation. A participial modifier of an NP or VP is a VP[part] that serves to modify the meaning of the NP or VP.</description><example>truffles picked during the spring are tasty→partmod(truffles, picked)</example><example>Bill picked Fred for the team demonstrating his incompetence→partmod(picked, demonstrating)</example></relation>
+<relation><name>INFINITIVAL_MODIFIER</name><shortname>infmod</shortname><longname>infinitival modifier</longname><parent>infmod | mod | dep</parent><sourcepattern>^NP(?:-TMP|-ADV)?$</sourcepattern><targetpattern>Root /^NP(?:-[A-Z]+)?$/
+   < S=target
+      and
+         < VP
+            < TO
+         $-- /^NP|NNP?S?$/</targetpattern><targetpattern>Root /^NP(?:-[A-Z]+)?$/
+   < SBAR=target
+      and
+         < S
+            < VP
+               < TO
+         $-- /^NP|NNP?S?$/</targetpattern><description>The "infinitival modifier" grammatical relation. An infinitival modifier of an NP is an S/VP that serves to modify the meaning of the NP.</description><example>points to establish are ...→infmod(points, establish)</example></relation>
+<relation><name>ADVERBIAL_MODIFIER</name><shortname>advmod</shortname><longname>adverbial modifier</longname><parent>advmod | mod | dep</parent><sourcepattern>VP|ADJP|WHADJP|ADVP|WHADVP|S|SBAR|SINV|SQ|SBARQ|XS|NP(?:-TMP|-ADV)?|RRC</sourcepattern><targetpattern>Root /^VP|ADJP|WHADJP|S|SBAR|SINV|SQ|XS|NP(?:-TMP|-ADV)?|RRC$/
+   < RB|RBR|RBS|WRB|ADVP|WHADVP=target
+      !< /^(?i:not|n't|never)$/</targetpattern><targetpattern>Root ADVP|WHADVP
+   and
+      < RB|RBR|RBS|WRB|ADVP|WHADVP|JJ=target
+         !< /^(?i:not|n't|never)$/
+      !< CC
+      !< CONJP</targetpattern><targetpattern>Root SBAR
+   < WHNP=target
+      < WRB</targetpattern><targetpattern>Root SBARQ
+   <1 WHADVP=target</targetpattern><targetpattern>Root XS
+   < /^JJ$/=target</targetpattern><description>The "adverbial modifier" grammatical relation. An adverbial modifier of a word is a (non-clausal) RB or ADVP that serves to modify the meaning of the word.</description><example>genetically modified food→advmod(modified, genetically)</example><example>less often→advmod(often, less)</example></relation>
+<relation><name>NEGATION_MODIFIER</name><shortname>neg</shortname><longname>negation modifier</longname><parent>neg | advmod | mod | dep</parent><sourcepattern>VP|ADJP|S|SBAR|SINV|SQ|NP(?:-TMP|-ADV)?|FRAG</sourcepattern><targetpattern>Root /^VP|NP(?:-TMP|-ADV)?|ADJP|SQ|S|FRAG$/
+   < RB=target
+      < /^(?i:not|n't|never)$/</targetpattern><targetpattern>Root VP|ADJP|S|SBAR|SINV|FRAG
+   < ADVP=target
+      <# RB
+         < /^(?i:not|n't|never)$/</targetpattern><targetpattern>Root VP
+   and
+      > SQ
+      $-- RB=target
+         < /^(?i:not|n't|never)$/</targetpattern><description>The "negation modifier" grammatical relation. The negation modifier is the relation between a negation word and the word it modifies.</description><example>Bill is not a scientist→neg(scientist, not)</example><example>Bill doesn't drive→neg(drive, n't)</example></relation>
+<relation><name>MEASURE_PHRASE</name><shortname>measure</shortname><longname>measure-phrase</longname><parent>measure | mod | dep</parent><sourcepattern>ADJP|ADVP</sourcepattern><targetpattern>Root ADJP
+   and
+      <-1 JJ
+      <1 NP=target
+         !< NNP</targetpattern><targetpattern>Root ADVP|ADJP
+   <# /^JJ|IN$/
+      $- NP=target</targetpattern><description>The "measure-phrase" grammatical relation. The measure-phrase is the relation between the head of an ADJP/ADVP and the head of a measure-phrase modifying the ADJP/ADVP.</description><example>The director is 65 years old→measure(old, years)</example></relation>
+<relation><name>DETERMINER</name><shortname>det</shortname><longname>determiner</longname><parent>det | mod | dep</parent><sourcepattern>^NP(?:-TMP|-ADV)?|WHNP</sourcepattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < DT=target
+      and
+         !< /both|either|neither/
+         !$- DT
+         !$++ CC
+         $++ /^N[NX]/</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < DT=target
+      and
+         < /both|either|neither/
+         !$- DT
+         !$++ CC
+         $++ /^N[NX]/
+         !$++ NP
+            < CC</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < DT=target
+      and
+         !< /both|neither|either/
+         $++ CC
+         $++ /^N[NX]/</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < DT=target
+      and
+         $++ /^JJ/
+            !$+ /^NN/
+         !$++ CC</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < RB=target
+      $++ /PDT/
+         $+ /^NN/</targetpattern><targetpattern>Root WHNP
+   < NP
+      $-- WHNP=target
+         < WDT</targetpattern><targetpattern>Root WHNP
+   < /^NN/
+      $-- WDT|WP=target</targetpattern><description>The "determiner" grammatical relation.</description><example>The man is here→det(man,the)</example><example>Which man do you prefer?→det(man,which)</example></relation>
+<relation><name>PREDETERMINER</name><shortname>predet</shortname><longname>predeterminer</longname><parent>predet | mod | dep</parent><sourcepattern>^NP(?:-TMP|-ADV)?</sourcepattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < PDT|DT=target
+      and
+         $+ /DT|PRP\$/
+         $++ /^N[NX]/
+         !$++ CC</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   and
+      < PDT|DT=target
+         and
+            $+ DT
+            $++ /^JJ/
+               !$+ /^NN/
+      !$++ CC</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   and
+      < PDT=target
+      <-1 DT</targetpattern><description>The "predeterminer" grammatical relation.</description><example>All the boys are here→predet(boys,all)</example></relation>
+<relation><name>PRECONJUNCT</name><shortname>preconj</shortname><longname>preconjunct</longname><parent>preconj | mod | dep</parent><sourcepattern>S|VP|ADJP|PP|ADVP|UCP|NX|SBAR|^NP(?:-TMP|-ADV)?</sourcepattern><targetpattern>Root /^NP(?:-TMP|-ADV)?|NX$/
+   and
+      < PDT|CC=target
+         and
+            < /both|neither|either/
+            $++ /^N[NX]/
+      $++ CC</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?|NX$/
+   and
+      < PDT|CC=target
+         and
+            < /both|either|neither/
+            $++ /^JJ/
+               !$+ /^NN/
+      $++ CC</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?|NX$/
+   < PDT|CC|DT=target
+      and
+         < /both|either|neither/
+         $++ CC</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?|NX$/
+   and
+      < PDT|CC|DT=target
+         < /both|either|neither/
+      < NP
+         < CC</targetpattern><targetpattern>Root S|VP|ADJP|PP|ADVP|UCP|NX|SBAR
+   < PDT|DT|CC=target
+      and
+         < /both|either|neither/
+         $++ CC</targetpattern><description>The "preconjunct" grammatical relation.</description><example>Both the boys and the girls are here→preconj(boys,both)</example></relation>
+<relation><name>POSSESSION_MODIFIER</name><shortname>poss</shortname><longname>possession modifier</longname><parent>poss | mod | dep</parent><sourcepattern>^NP(?:-TMP|-ADV)?$</sourcepattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < /^PRP\$/=target
+      $++ /^NN/</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < NP=target
+      < POS</targetpattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   < NNS=target
+      $+ POS
+         < /'/</targetpattern><description>The "possession" grammatical relation.</description><example>their offices→poss(offices, their)</example><example>Bill 's clothes→poss(clothes, Bill)</example></relation>
+<relation><name>POSSESSIVE_MODIFIER</name><shortname>possessive</shortname><longname>possessive modifier</longname><parent>possessive | mod | dep</parent><sourcepattern>^NP(?:-TMP|-ADV)?$</sourcepattern><targetpattern>Root /^NP(?:-TMP|-ADV)?$/
+   <-1 POS=target</targetpattern><description>The "possessive" grammatical relation.</description><example>John's book→possessive(John, 's)</example></relation>
+<relation><name>PREPOSITIONAL_MODIFIER</name><shortname>prep</shortname><longname>prepositional modifier</longname><parent>prep | mod | dep</parent><sourcepattern>NP(?:-TMP|-ADV)?|VP|S|SINV|ADJP</sourcepattern><targetpattern>Root /^NP(?:-TMP|-ADV)?|VP|ADJP$/
+   < /^PP(?:-TMP)?$/=target</targetpattern><targetpattern>Root S|SINV
+   and
+      < /^PP(?:-TMP)?$/=target
+         !< SBAR
+      < VP</targetpattern><description>The "prepositional modifier" grammatical relation. A prepositional modifier of a verb, adjective, or noun is any prepositional phrase that serves to modify the meaning of the verb, adjective, or noun.</description><example>I saw a cat in a hat→prep(cat, in)</example><example>I saw a cat with a telescope→prep(saw, with)</example><example>He is responsible for meals→prep(responsible, for)</example></relation>
+<relation><name>PHRASAL_VERB_PARTICLE</name><shortname>prt</shortname><longname>phrasal verb particle</longname><parent>prt | mod | dep</parent><sourcepattern>VP</sourcepattern><targetpattern>Root VP
+   < PRT=target</targetpattern><description>The "phrasal verb particle" grammatical relation. The "phrasal verb particle" relation identifies phrasal verb.</description><example>They shut down the station.→prt(shut, down)</example></relation>
+<relation><name>PARATAXIS</name><shortname>parataxis</shortname><longname>parataxis</longname><parent>parataxis | dep</parent><sourcepattern>S|VP</sourcepattern><targetpattern>Root VP
+   < PRN=target
+      < /^S|SBAR$/</targetpattern><targetpattern>Root VP
+   $ PRN=target
+      < /^S|SBAR$/</targetpattern><targetpattern>Root S|VP
+   < /^:$/
+      $+ /^S/=target</targetpattern><description>The "parataxis" grammatical relation. Relation between the main verb of a sentence and other sentential elements, such as a sentential parenthetical, a sentence after a ":" or a ";" etc.</description><example>The guy, John said, left early in the morning.→parataxis(left,said)</example></relation>
+<relation><name>SEMANTIC_DEPENDENT</name><shortname>sdep</shortname><longname>semantic dependent</longname><parent>sdep | dep</parent><description>The "semantic dependent" grammatical relation has been introduced as a supertype for the controlling subject relation.</description></relation>
+<relation><name>CONTROLLING_SUBJECT</name><shortname>xsubj</shortname><longname>controlling subject</longname><parent>xsubj | sdep | dep</parent><sourcepattern>VP</sourcepattern><targetpattern>Root VP
+   and
+      < TO
+      > S
+         and
+            !$- NP
+            !< NP
+            !>> VP
+               < VB
+                  < be
+            >+(VP) VP
+               $-- NP=target</targetpattern><description>The "controlling subject" grammatical relation. A controlling subject is the relation between the head of an xcomp and the external subject of that clause.</description><example>Tom likes to eat fish→xsubj(eat, Tom)</example></relation>
+<relation><name>AGENT</name><shortname>agent</shortname><longname>agent</longname><parent>agent | dep</parent><description>The "agent" grammatical relation. The agent of a passive VP is the complement introduced by "by" and doing the action.</description><example>The man has been killed by the police→agent(killed, police)</example></relation>
+</model>

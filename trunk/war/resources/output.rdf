@@ -1,0 +1,16 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:j.0="http://www.geonames.org/ontology#" > 
+  <rdf:Description rdf:about="http://www.geonames.org/ontology#Country">
+    <j.0:featureCode> 1001</j.0:featureCode>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.geonames.org/ontology#RDFData">
+    <j.0:locatedIn rdf:nodeID="A0"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="A0">
+    <rdf:subject rdf:resource="http://www.geonames.org/ontology#RDFData"/>
+    <rdf:predicate rdf:resource="http://www.geonames.org/ontology#locatedIn"/>
+    <rdf:object> headers</rdf:object>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement"/>
+  </rdf:Description>
+</rdf:RDF>

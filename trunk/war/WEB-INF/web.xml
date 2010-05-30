@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  
+  <!-- Servlets -->
+  <servlet>
+    <servlet-name>semtusServlet</servlet-name>
+    <servlet-class>edu.iastate.airl.semtus.server.SemtusServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>semtusServlet</servlet-name>
+    <url-pattern>/semtuswebapp/semtus</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>UploadServiceController</servlet-name>
+    <servlet-class>edu.iastate.airl.semtus.server.UploadServiceController</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>UploadServiceController</servlet-name>
+    <url-pattern>/semtuswebapp/upload</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>HttpVisualizeHandler</servlet-name>
+    <servlet-class>edu.iastate.airl.semtus.visualizer.HttpVisualizeHandler</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>HttpVisualizeHandler</servlet-name>
+    <url-pattern>/visualize</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>SEMTUSWEBAPP.html</welcome-file>
+  </welcome-file-list>
+
+</web-app>
