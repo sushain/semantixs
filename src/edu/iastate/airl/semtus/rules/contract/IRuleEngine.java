@@ -1,11 +1,11 @@
 /*
- 
+
 SEMANTIXS (System for Extraction of doMAin-specific iNformation
 from unstructured Text Including compleX Structures)
 
 Copyright (c) 2010 Sushain Pandit.
 
-Info: SEMANTIXS is a system for ontology-guided extraction and semantic 
+Info: SEMANTIXS is a system for ontology-guided extraction and semantic
 representation of structured information from unstructured text.
 For further information, please visit - http://www.sushain.com/semantixs/home
 
@@ -32,21 +32,21 @@ import edu.stanford.nlp.trees.Tree;
 
 public interface IRuleEngine {
 
-	public static final int MAX_REIFICATION_COMPLEXITY = 5;
-	
+	public static final int MAX_REIFICATION_COMPLEXITY = 7;
+
 	public static final String REIFICATION_FLAG = "reificationFlag";
-	
+
 	public static final String CONJ_AND = "and";
-	
+
 	public static final String PREP_WITH = "with";
-	
+
 	public static final String FOUND = "found";
-	
+
 	public static final String NOT_FOUND = "notFound";
-	
+
 	public static final String CCOMP = "ccomp";
-	
+
 	public static final String CONJ = "conj";
-	
+
 	public void process(List <Tree> generatedTrees, Object [][][] generatedDependencies);
 }
