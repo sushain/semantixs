@@ -1,11 +1,11 @@
 /*
- 
+
 SEMANTIXS (System for Extraction of doMAin-specific iNformation
 from unstructured Text Including compleX Structures)
 
 Copyright (c) 2010 Sushain Pandit.
 
-Info: SEMANTIXS is a system for ontology-guided extraction and semantic 
+Info: SEMANTIXS is a system for ontology-guided extraction and semantic
 representation of structured information from unstructured text.
 For further information, please visit - http://www.sushain.com/semantixs/home
 
@@ -50,22 +50,20 @@ import edu.stanford.nlp.web.HTMLParser;
 
 /**
  * Parser entity
- * 
+ *
  * @author Bernard Bou
- * 
+ *
  */
 public class Parser
 {
     /**
      * Stanford Lexicalized Parser
      */
-    protected LexicalizedParser theParser;
-
-    // C O N S T R U C T
+    protected LexicalizedParser theParser=null;
 
     /**
      * Constructor
-     * 
+     *
      * @param thisInputStream
      *            object stream for serialized grammar file
      */
@@ -78,7 +76,7 @@ public class Parser
 
     /**
      * Load a grammar
-     * 
+     *
      * @param thisInputStream
      *            serialized grammar file input stream
      */
@@ -89,7 +87,7 @@ public class Parser
 
     /**
      * Parse document
-     * 
+     *
      * @param thisDocumentPath
      *            document path
      */
@@ -102,7 +100,7 @@ public class Parser
 
     /**
      * Load the grammar
-     * 
+     *
      * @param thisInputStream
      *            serialized grammar file input stream
      * @return LexicalizedParser
@@ -112,9 +110,9 @@ public class Parser
 	try
 	{
 	    LexicalizedParser thisParser = new LexicalizedParser(thisInputStream);
-	    
+
 		thisParser.setOptionFlags(new String[]{"-maxLength", "80", "-retainTmpSubcategories"});
-		
+
 	    return thisParser;
 	}
 	catch (Exception e)
@@ -126,7 +124,7 @@ public class Parser
 
     /**
      * Parse
-     * 
+     *
      * @param thisDocumentPath
      *            document path
      */
@@ -137,7 +135,7 @@ public class Parser
 
     /**
      * Get document from text
-     * 
+     *
      * @param thisText
      *            text
      * @return document
@@ -152,7 +150,7 @@ public class Parser
 
     /**
      * Get sentences from text
-     * 
+     *
      * @param thisText
      *            text
      * @return list of sentences
@@ -164,7 +162,7 @@ public class Parser
 
     /**
      * Get sentences from words
-     * 
+     *
      * @param theseWords
      *            words
      * @return list of sentences
@@ -183,7 +181,7 @@ public class Parser
 
     /**
      * Parse sentence
-     * 
+     *
      * @param thisSentence
      *            sentence to parse
      * @return parsed tree
@@ -207,7 +205,7 @@ public class Parser
 
     /**
      * Parse sentences
-     * 
+     *
      * @param theseSentences
      *            sentences to parse
      * @return list of parse trees
@@ -225,7 +223,7 @@ public class Parser
 
     /**
      * Parse document
-     * 
+     *
      * @param thisDocumentPath
      *            document path
      * @return list of parse trees
@@ -240,7 +238,7 @@ public class Parser
 
     /**
      * Whether this parser is valid
-     * 
+     *
      * @return true if this parser is valid
      */
     public boolean isValid()
@@ -250,7 +248,7 @@ public class Parser
 
     /**
      * Get morphology base
-     * 
+     *
      * @param thisWord
      *            word
      * @return morphology base
@@ -271,7 +269,7 @@ public class Parser
 
     /**
      * Get morphology base
-     * 
+     *
      * @param thisString
      *            string
      * @return morphology base
