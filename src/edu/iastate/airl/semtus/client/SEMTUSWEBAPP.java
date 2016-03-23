@@ -1,11 +1,11 @@
 /*
- 
+
 SEMANTIXS (System for Extraction of doMAin-specific iNformation
 from unstructured Text Including compleX Structures)
 
 Copyright (c) 2010 Sushain Pandit.
 
-Info: SEMANTIXS is a system for ontology-guided extraction and semantic 
+Info: SEMANTIXS is a system for ontology-guided extraction and semantic
 representation of structured information from unstructured text.
 For further information, please visit - http://www.sushain.com/semantixs/home
 
@@ -72,11 +72,11 @@ public class SEMTUSWEBAPP implements EntryPoint {
 	public static final String SEMTUS_HOSTING_PORT_NAME = "8080";
 
 	public static final String SEMTUS_APP_NAME = "semtuswebapp";
-	
+
 	public static final String LEVEL_ONE = "1";
-	
+
 	public static final String LEVEL_TWO = "2";
-	
+
 	public static final String LEVEL_THREE = "3";
 
 	/**
@@ -433,7 +433,7 @@ public class SEMTUSWEBAPP implements EntryPoint {
 								+ "In this setting, SEMANTIXS expects an rdf/owl file as input (via upload option under File menu), containing the domain ontology (TBOX: class concepts + relationships) as well as instance assertions (A-BOX) that you expect in text.</p>");
 
 				announcementBox.center();
-				
+
 				level = LEVEL_ONE;
 			}
 		};
@@ -445,7 +445,7 @@ public class SEMTUSWEBAPP implements EntryPoint {
 				announcementLabel
 						.setHTML("<p align=\"center\"><b>SEMANTIXS Analysis Level has been set to 2.</b><br/><br/>"
 								+ "In this setting, SEMANTIXS still expects an rdf/owl file as input (via upload option under File menu), however it doesn't assume that it's complete in the sense of covering all the instances expected in text. "
-								+ "It thus utilizes some pre-generated instance data (for eg., FOAF, DBPedia) in addition " 
+								+ "It thus utilizes some pre-generated instance data (for eg., FOAF, DBPedia) in addition "
 								+ "to the given ontology for acquiring knowledge, however in the current version, it won't attempt to automatically map those instances to the input ontology and instead, retain their original references.</center>");
 
 				announcementBox.center();
@@ -453,7 +453,7 @@ public class SEMTUSWEBAPP implements EntryPoint {
 				level = LEVEL_TWO;
 			}
 		};
-		
+
 		Command menuCommandUowe = new Command() {
 
 			public void execute() {
@@ -564,7 +564,7 @@ public class SEMTUSWEBAPP implements EntryPoint {
 						.setHTML("<p align=\"center\"><font color=\"#a29364\" face=\"Times\" size=\"6\">"
 								+ "<b>SEMANTIXS</b></font>"
 								+ "<br/><font color=\"#a29364\" face=\"Times\" size=\"3\">version 1.0.0</font><br/><br/></br></br>"
-								+ "Copyright (c) <a href=\"http://sushain.com/profile\" target=\"_blank\">Sushain Pandit</a>. All rights reserved."
+								+ "Copyright (c) <a href=\"http://sushain.com\" target=\"_blank\">Sushain Pandit</a>. All rights reserved."
 
 								+ "<br/>"
 								+ "<a href=\"http://www.cs.iastate.edu/~honavar/aigroup.html\" target=\"_blank\">Artificial Intelligence Research Lab</a>, Iowa State University.</p>");
