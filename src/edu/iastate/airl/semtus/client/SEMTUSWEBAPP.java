@@ -225,7 +225,7 @@ public class SEMTUSWEBAPP implements EntryPoint {
 		HTML homeText = new HTML(
 				"<p align=\"center\"><font color=\"#e0c190\" face=\"Times\" size=\"6\">"
 						+ "<b>SEMANTIXS</b></font>"
-						+ "<br/><font color=\"#e0c190\" face=\"Times\" size=\"3\">version 1.0.0</font><br/>"
+						+ "<br/><font color=\"#e0c190\" face=\"Times\" size=\"3\">version 1.0.1</font><br/>"
 						+ "</p>");
 
 		tabPanel.add(homeText, tabTitles[0]);
