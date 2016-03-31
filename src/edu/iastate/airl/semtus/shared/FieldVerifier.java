@@ -1,11 +1,11 @@
 /*
- 
+
 SEMANTIXS (System for Extraction of doMAin-specific iNformation
 from unstructured Text Including compleX Structures)
 
 Copyright (c) 2010 Sushain Pandit.
 
-Info: SEMANTIXS is a system for ontology-guided extraction and semantic 
+Info: SEMANTIXS is a system for ontology-guided extraction and semantic
 representation of structured information from unstructured text.
 For further information, please visit - http://www.sushain.com/semantixs/home
 
@@ -50,12 +50,7 @@ public class FieldVerifier {
 
 	/**
 	 * Verifies that the specified name is valid for our service.
-	 * 
-	 * In this example, we only require that the name is at least four
-	 * characters. In your application, you can use more complex checks to ensure
-	 * that usernames, passwords, email addresses, URLs, and other fields have the
-	 * proper syntax.
-	 * 
+	 *
 	 * @param name the name to validate
 	 * @return true if valid, false if invalid
 	 */
@@ -63,6 +58,6 @@ public class FieldVerifier {
 		if (name == null) {
 			return false;
 		}
-		return name.length() > 7;
+		return name.length() > 10;
 	}
 }
